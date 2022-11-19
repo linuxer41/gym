@@ -1,0 +1,159 @@
+<script>
+	import CardSettings from "../Cards/CardSettings.svelte";
+	import FormLayer from "./FormLayer.svelte";
+
+    export let title = 'Formulario';
+</script>
+<FormLayer {title}>
+    <form>
+        <h6 class="text-stale-400 text-sm mt-3 mb-6 font-bold uppercase">User Information</h6>
+        <div class="flex flex-wrap">
+            <div class="w-full lg:w-6/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label
+                        class="block uppercase text-stale-600 text-xs font-bold mb-2"
+                        for="grid-username"
+                    >
+                        Username
+                    </label>
+                    <input
+                        id="grid-username"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="lucky.jesse"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-6/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label class="block uppercase text-stale-600 text-xs font-bold mb-2" for="grid-email">
+                        Email address
+                    </label>
+                    <input
+                        id="grid-email"
+                        type="email"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="jesse@example.com"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-6/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label
+                        class="block uppercase text-stale-600 text-xs font-bold mb-2"
+                        for="grid-first-name"
+                    >
+                        First Name
+                    </label>
+                    <input
+                        id="grid-first-name"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="Lucky"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-6/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label
+                        class="block uppercase text-stale-600 text-xs font-bold mb-2"
+                        for="grid-last-name"
+                    >
+                        Last Name
+                    </label>
+                    <input
+                        id="grid-last-name"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="Jesse"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <hr class="mt-6 border-b-1 border-stale-300" />
+
+        <h6 class="text-stale-400 text-sm mt-3 mb-6 font-bold uppercase">Contact Information</h6>
+        <div class="flex flex-wrap">
+            <div class="w-full lg:w-12/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label class="block uppercase text-stale-600 text-xs font-bold mb-2" for="grid-address">
+                        Address
+                    </label>
+                    <input
+                        id="grid-address"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-4/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label class="block uppercase text-stale-600 text-xs font-bold mb-2" for="grid-city">
+                        City
+                    </label>
+                    <input
+                        id="grid-city"
+                        type="email"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="New York"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-4/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label class="block uppercase text-stale-600 text-xs font-bold mb-2" for="grid-country">
+                        Country
+                    </label>
+                    <input
+                        id="grid-country"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="United States"
+                    />
+                </div>
+            </div>
+            <div class="w-full lg:w-4/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label
+                        class="block uppercase text-stale-600 text-xs font-bold mb-2"
+                        for="grid-postal-code"
+                    >
+                        Postal Code
+                    </label>
+                    <input
+                        id="grid-postal-code"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        value="Postal Code"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <hr class="mt-6 border-b-1 border-stale-300" />
+
+        <h6 class="text-stale-400 text-sm mt-3 mb-6 font-bold uppercase">About Me</h6>
+        <div class="flex flex-wrap">
+            <div class="w-full lg:w-12/12 px-4">
+                <div class="relative w-full mb-3">
+                    <label
+                        class="block uppercase text-stale-600 text-xs font-bold mb-2"
+                        for="grid-about-me"
+                    >
+                        About me
+                    </label>
+                    <textarea
+                        id="grid-about-me"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        rows="4"
+                        value="A beautiful UI Kit and Admin for Svelte & Tailwind CSS. It is Free
+            and Open Source."
+                    />
+                </div>
+            </div>
+        </div>
+    </form>
+</FormLayer>
