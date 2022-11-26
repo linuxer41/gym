@@ -1,6 +1,8 @@
 <script>
 	// library for creating dropdown menu appear on click
 	import { createPopper } from '@popperjs/core';
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
 
 	// core components
 
@@ -37,26 +39,17 @@
 			? 'block'
 			: 'hidden'}"
 	>
-		<a
-			href="#pablo"
-			on:click={(e) => e.preventDefault()}
+		<button
 			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			on:click={() => {dispatch('edit') ; dropdownPopoverShow = false;}}
 		>
-			Action
-		</a>
-		<a
-			href="#pablo"
-			on:click={(e) => e.preventDefault()}
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			Eitar
+		</button>
+		<button
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-red-700"
+			on:click={() => {dispatch('delete'); dropdownPopoverShow = false;}}
 		>
-			Another action
-		</a>
-		<a
-			href="#pablo"
-			on:click={(e) => e.preventDefault()}
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
-		>
-			Something else here
-		</a>
+			Eliminar
+		</button>
 	</div>
 </div>

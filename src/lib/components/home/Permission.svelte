@@ -1,6 +1,6 @@
 <script>
 	import CardSettings from "../Cards/CardSettings.svelte";
-	import FormLayer from "./FormLayer.svelte";
+	import FormLayer from "../forms/FormLayer.svelte";
 
     export let title = 'Formulario';
 </script>

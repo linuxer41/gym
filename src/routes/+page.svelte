@@ -43,16 +43,25 @@
 	let targetCard: typeof cards[number];
 	let panelHeight = 0;
 	function onKeydOWn(e: KeyboardEvent) {
-		e.preventDefault();
+		
 		// no repeat
 		if (e.repeat) return;
-		if (e.key === 'F7') {
-			targetCard = cards[0];
-		} else if (e.key === 'F8') {
-			targetCard = cards[1];
-		} else if (e.key === 'F9') {
-			targetCard = cards[2];
+
+		switch (e.key) {
+			case 'F7':
+				e.preventDefault();
+				targetCard = cards[0];
+				break;
+			case 'F8':
+				e.preventDefault();
+				targetCard = cards[1];
+				break;
+			case 'F9':
+				e.preventDefault();
+				targetCard = cards[2];
+				break;
 		}
+		
 	}
 	$:console.log(panelHeight);
 </script>

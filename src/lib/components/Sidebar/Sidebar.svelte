@@ -5,11 +5,6 @@
 	import NotificationDropdown from '$lib/components/Dropdowns/NotificationDropdown.svelte';
 	import UserDropdown from '$lib/components/Dropdowns/UserDropdown.svelte';
 
-	let collapseShow = 'hidden';
-
-	function toggleCollapseShow(classes: string) {
-		collapseShow = classes;
-	}
 
 	$: pathname = $page.url.pathname;
 	const logo = '/logos/endor-logo.jpg';
@@ -19,68 +14,21 @@
 	class="shadow-xl bg-white flex flex-wrap items-center justify-between relative w-full z-10 py-4 px-6"
 >
 	<div
-		class="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto"
+		class="flex-col items-stretch min-h-full flex-nowrap px-0 flex  justify-between w-full mx-auto"
 	>
-		<!-- Toggler -->
-		<button
-			class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
-			type="button"
-			on:click={() => toggleCollapseShow('bg-white m-2 py-3 px-6')}
-		>
-			<i class="fas fa-bars" />
-		</button>
-		<!-- Brand -->
-		<a
-			class="md:block text-left md:pb-2 text-stale-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
-			href="/"
-		>
-			<img class="w-40" src={logo} alt="" />
-		</a>
-		<!-- User -->
-		<ul class="md:hidden items-center flex flex-wrap list-none">
-			<li class="inline-block relative">
-				<NotificationDropdown />
-			</li>
-			<li class="inline-block relative">
-				<UserDropdown />
-			</li>
-		</ul>
+
+
 		<!-- Collapse -->
 		<div
-			class="md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded {collapseShow}"
+			class="flex flex-col items-stretch relative mt-4 shadow-none overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded"
 		>
-			<!-- Collapse header -->
-			<div class="md:min-w-full md:hidden block pb-4 mb-4 border-b border-solid border-stale-200">
-				<div class="flex flex-wrap">
-					<div class="w-6/12 h-12">
-						<a
-							class="md:block text-left md:pb-2 text-stale-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
-							href="/"
-						>
-							<img src={logo} alt="" />
-						</a>
-					</div>
-					<div class="w-6/12 flex justify-end">
-						<button
-							type="button"
-							class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
-							on:click={() => toggleCollapseShow('hidden')}
-						>
-							<i class="fas fa-times" />
-						</button>
-					</div>
-				</div>
-			</div>
-			<!-- Form -->
-			<form class="mt-6 mb-4 md:hidden">
-				<div class="mb-3 pt-0">
-					<input
-						type="text"
-						placeholder="Search"
-						class="border-0 px-3 py-2 h-12 border border-solid border-stale-500 placeholder-stale-300 text-stale-600 bg-white rounded text-base leading-snug shadow-none outline-none focus:outline-none w-full font-normal"
-					/>
-				</div>
-			</form>
+				<!-- Brand -->
+				<a
+				class="block text-left md:pb-2 text-stale-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+				href="/"
+			>
+				<img class="w-40" src={logo} alt="" />
+			</a>
 
 			<!-- Divider -->
 			<hr class="my-4 md:min-w-full" />
@@ -108,13 +56,13 @@
 				</li>
 				<li class="items-center">
 					<a
-						href="/permissions"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/permissions'
+						href="/statistics"
+						class="text-xs uppercase py-3 font-bold block {pathname === '/statistics'
 							? 'text-lime-500 hover:text-lime-600'
 							: 'text-stale-700 hover:text-stale-500'}"
 					>
 						<i
-							class="fas fa-tv mr-2 text-sm {pathname === '/permissions'
+							class="fas fa-tv mr-2 text-sm {pathname === '/statistics'
 								? 'opacity-75'
 								: 'text-stale-300'}"
 						/>

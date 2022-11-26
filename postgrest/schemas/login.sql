@@ -42,7 +42,26 @@ $$ language plpgsql security definer;
 
 -- add register function returning jwt_token and user data
 create or replace function
-api.register(email text, pass text, role name) returns json as $$
+api.register(
+  -- email text,
+  -- pass text,
+  -- role name,
+  -- name text,
+  -- phone text default null,
+  -- address text default null,
+  -- dni text default null
+  
+  --order a-z and convert to named parameters
+  address text default null,
+  dni text default null,
+  email text default null,
+  name text default null,
+  pass text default null,
+  phone text default null,
+  role name default null
+  
+
+) returns json as $$
 declare
   result json;
 begin
@@ -51,7 +70,8 @@ begin
     raise unique_violation using message = 'email already registered';
   end if;
   -- insert user
-  insert into api.users (email, pass, role) values (email, pass, role);
+  insert into api.users (email, pass, role, name, phone, address, dni)
+  values (register.email, register.pass, register.role, register.name, register.phone, register.address, register.dni);
   -- login and return jwt_token
   select api.login(email, pass) into result;
   -- return user data and jwt_token

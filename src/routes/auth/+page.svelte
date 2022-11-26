@@ -1,7 +1,27 @@
-<script>
-	// core components
-	const github = '../assets/img/github.svg';
-	const google = '../assets/img/google.svg';
+<script lang="ts">
+	import { goto } from "$app/navigation";
+	import { rpcService } from "$lib/core/services";
+	import { authToken, storeUser } from "$lib/core/store";
+
+	let email: string;
+	let password: string;
+ async function login() {
+	try {
+		const response = await rpcService.login({
+			email,
+			pass:password
+		})
+		if(!response.ok)
+			throw new Error("Invalid credentials")
+		const data: {user: User, token: string} = await response.json()
+		authToken.sync(data.token)
+		storeUser.sync(data.user)
+		await goto("/")
+		
+	} catch (error) {
+		console.log(error)
+	}
+}
 </script>
 
 <div class="container mx-auto px-4 h-full">
@@ -46,6 +66,7 @@
 								type="email"
 								class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 								placeholder="Email"
+								bind:value={email}
 							/>
 						</div>
 
@@ -61,6 +82,7 @@
 								type="password"
 								class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 								placeholder="Clave"
+								bind:value={password}
 							/>
 						</div>
 						<div>
@@ -78,6 +100,7 @@
 							<button
 								class="bg-stale-800 text-white active:bg-stale-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
 								type="button"
+								on:click={login}
 							>
 								Ingresar
 							</button>

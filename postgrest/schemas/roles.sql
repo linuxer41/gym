@@ -33,18 +33,14 @@ grant select on api.users to api_user;
 grant select on api.plans to api_user;
 grant select on api.memberships to api_user;
 grant select, insert, update on api.clients to api_user;
-grant select, insert, update on api.clients_memberships to api_user;
+grant select, insert, update on api.suscriptions to api_user;
 grant select, insert on api.payments to api_user;
 grant select, insert on api.products to api_user;
 grant select, insert, update on api.cash_register to api_user;
 grant select, insert on api.sales to api_user;
-grant select, insert, update on api.sales_products to api_user;
+grant select, insert, update on api.sale_items to api_user;
 grant select on api.expenses to api_user;
 grant select on api.incomes to api_user;
-grant select on api.workouts to api_user;
-grant select on api.exercises to api_user;
-grant select on api.workout_exercises to api_user;
-grant select on api.workout_clients to api_user;
 
 -- granular permissions to api_anon
 grant select on api.plans to api_anon;
