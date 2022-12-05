@@ -98,6 +98,14 @@ export class ElectronCapacitorApp {
 	}
 
 	async init(): Promise<void> {
+		// run postgrest in the background
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { spawn } = require('child_process');
+		// get current directory
+		const currentDir = process.cwd();
+		console.log({ currentDir });
+		const postgrest = spawn('postgrest/postgrest.exe', ['postgrest/postgrest.conf']);
+
 		const icon = nativeImage.createFromPath(
 			join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'appIcon.ico' : 'appIcon.png')
 		);
@@ -125,11 +133,10 @@ export class ElectronCapacitorApp {
 			titleBarStyle: 'hidden',
 			// transparent: true,
 			titleBarOverlay: {
-				color: 'rgba(255, 0, 0, 0.0)',
+				color: 'rgba(255, 0, 0, 0.0)'
 				// symbolColor: 'white',
 				// symbolColor: '#B3E001',
-			  }
-			
+			}
 		});
 		this.mainWindowState.manage(this.MainWindow);
 
@@ -233,12 +240,17 @@ export function setupContentSecurityPolicy(customScheme: string): void {
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
-				...details.responseHeaders,
-				'Content-Security-Policy': [
-					electronIsDev
-						? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
-						: `default-src ${customScheme}://* 'unsafe-inline' data:`
-				]
+				...details.responseHeaders
+				// 'Content-Security-Policy': [
+				// 	electronIsDev
+				// 		? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
+				// 		: `default-src ${customScheme}://* 'unsafe-inline' data:`
+				// ]
+				// 'Content-Security-Policy': [
+				// 	electronIsDev
+				// 	  ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' http://* 'unsafe-eval' https://* 'unsafe-eval' ws://* 'unsafe-eval' wss://* 'unsafe-eval' data:`
+				// 	  : `default-src ${customScheme}://* 'unsafe-inline' http://* 'unsafe-eval' https://* 'unsafe-eval' ws://* 'unsafe-eval' wss://* 'unsafe-eval' data:`,
+				//   ],
 			}
 		});
 	});

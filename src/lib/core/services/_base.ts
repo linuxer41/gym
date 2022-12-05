@@ -1,30 +1,28 @@
 import { get } from 'svelte/store';
 import { authToken } from '../store';
 import { settings } from '../settings';
-import { create } from "postgrester";
+import { create } from 'postgrester';
 
-import axios from "axios";
+import axios from 'axios';
 
 // create a new instance of axios with a custom config
 const axiosInstance = axios.create({
-	  baseURL: settings.apiUrl,
-	  headers: {
+	baseURL: settings.apiUrl,
+	headers: {
 		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-		'Authorization': `Bearer ${get(authToken)}`
-	  }
+		Accept: 'application/json',
+		Authorization: `Bearer ${get(authToken)}`
+	}
 });
 
 const postgrestClient = create({
 	axiosInstance
 });
 
-
 export class BaseService<T> {
 	base_url = `${settings.apiUrl}`;
 	location = '';
 	dbClient = postgrestClient;
-
 
 	// async fetch(last_patch = '', method = 'GET', data?: any): Promise<{
 	// 	data: T
@@ -40,20 +38,19 @@ export class BaseService<T> {
 	// 	});
 	// }
 	getDbClient() {
-		const token = (get(authToken) as AuthToken);
-		if(token) {
+		const token = get(authToken) as AuthToken;
+		if (token) {
 			axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 		}
 		return this.dbClient;
 	}
 
-	async query(opts: QueryDataOpts<T> = {page: 0, pageSize: 1000}): Promise<{
+	async query(opts: QueryDataOpts<T> = { page: 0, pageSize: 1000 }): Promise<{
 		data: T[];
 		pagesLength: number;
 		totalLength: number;
 	}> {
-
-		let query = this.getDbClient().select("*")
+		let query = this.getDbClient().select('*');
 		// is?: { key: keyof T, val: boolean | null }[];
 		// eq?: { key: keyof T, val: boolean | number | null | string }[];
 		// neq?: { key: keyof T, val: boolean | number | null | string }[];
@@ -68,89 +65,91 @@ export class BaseService<T> {
 		// and?: { key: keyof T, val: boolean | number | null | string }[];
 		// or?: { key: keyof T, val: boolean | number | null | string }[];
 
-
 		if (opts.is) {
 			opts.is.forEach((is) => {
-				query = query.is(String(is.key), is.val);
+				query = query.is(String(is.field), is.value);
 			});
 		}
 		if (opts.eq) {
 			opts.eq.forEach((eq) => {
-				query = query.eq(String(eq.key), eq.val);
+				query = query.eq(String(eq.field), eq.value);
 			});
 		}
 		if (opts.neq) {
 			opts.neq.forEach((neq) => {
-				query = query.neq(String(neq.key), neq.val);
+				query = query.neq(String(neq.field), neq.value);
 			});
 		}
 		if (opts.gt) {
 			opts.gt.forEach((gt) => {
-				query = query.gt(String(gt.key), gt.val);
+				query = query.gt(String(gt.field), gt.value);
 			});
 		}
 		if (opts.gte) {
 			opts.gte.forEach((gte) => {
-				query = query.gte(String(gte.key), gte.val);
+				query = query.gte(String(gte.field), gte.value);
 			});
 		}
 		if (opts.lt) {
 			opts.lt.forEach((lt) => {
-				query = query.lt(String(lt.key), lt.val);
+				query = query.lt(String(lt.field), lt.value);
 			});
 		}
 		if (opts.lte) {
 			opts.lte.forEach((lte) => {
-				query = query.lte(String(lte.key), lte.val);
+				query = query.lte(String(lte.field), lte.value);
 			});
 		}
 		if (opts.in) {
 			opts.in.forEach((in_) => {
-				query = query.in(String(in_.key), in_.val);
+				query = query.in(String(in_.field), in_.value);
 			});
 		}
 		if (opts.like) {
 			opts.like.forEach((like) => {
-				query = query.like(String(like.key), like.val);
+				query = query.like(String(like.field), like.value);
 			});
 		}
 		if (opts.ilike) {
 			opts.ilike.forEach((ilike) => {
-				query = query.ilike(String(ilike.key), ilike.val);
+				query = query.ilike(String(ilike.field), ilike.value);
 			});
 		}
 		if (opts.not) {
-			query = query.not
+			query = query.not;
 			opts.not.forEach((not) => {
-				query = query.eq(String(not.key), not.val);
+				query = query.eq(String(not.field), not.value);
 			});
 		}
 		if (opts.and) {
-			query = query.and
+			query = query.and;
 			opts.and.forEach((and) => {
-				query = query.eq(String(and.key), and.val);
+				query = query[and.operator](String(and.field), String(and.value));
 			});
 		}
 		if (opts.or) {
-			query = query.or
+			query = query.or;
 			opts.or.forEach((or) => {
-				query = query.eq(String(or.key), or.val);
+				query = query[or.operator](String(or.field), String(or.value));
 			});
 		}
 		if (opts.orderBy) {
 			query = query.orderBy(String(opts.orderBy), opts.oderDir === 'desc' ? true : false);
 		}
-		if (opts.page) {
-			query = query.page(opts.page || 0, opts.pageSize || 1000);
-		}
+		query = query.page(opts.page || 0, opts.pageSize || 1000);
 		return await query.get<T>(`/${this.location}`);
 	}
 	async get(id: string, col: keyof T = 'id' as keyof T): Promise<T> {
-		const res = await this.getDbClient().select("*").eq(String(col), id).get<T>(`/${this.location}`, false);
+		const res = await this.getDbClient()
+			.select('*')
+			.eq(String(col), id)
+			.get<T>(`/${this.location}`, false);
 		return res?.data[0];
 	}
 	async create(data: Partial<T>): Promise<T> {
-		const res = await this.getDbClient().post<Partial<T>>(`/${this.location}`, data, {return: 'representation'});
+		const res = await this.getDbClient().post<Partial<T>>(`/${this.location}`, data, {
+			return: 'representation'
+		});
 		return res?.data as T;
 	}
 	async update(id: string, data: Partial<T>): Promise<T> {
@@ -159,8 +158,8 @@ export class BaseService<T> {
 	}
 
 	async delete(id: string): Promise<T> {
-		const res =  await this.getDbClient().eq('id', id).delete<Partial<T>>(`/${this.location}`, {
-			return: 'representation',
+		const res = await this.getDbClient().eq('id', id).delete<Partial<T>>(`/${this.location}`, {
+			return: 'representation'
 		});
 		return res?.data[0] as T;
 	}

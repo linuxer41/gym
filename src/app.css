@@ -5,7 +5,7 @@ html,
 body {
 	@apply h-full overflow-hidden;
 }
-:root{
+:root {
 	--success-color: #4caf50;
 	--error-color: #f44336;
 	--warning-color: #ff9800;

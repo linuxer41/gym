@@ -24,9 +24,9 @@
 	};
 </script>
 
-<div>
+<div class="relative">
 	<a
-		class="text-stale-500 py-1 px-3"
+		class="text-slate-500 py-1 px-3"
 		href="#pablo"
 		bind:this={btnDropdownRef}
 		on:click={toggleDropdown}
@@ -40,14 +40,20 @@
 			: 'hidden'}"
 	>
 		<button
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
-			on:click={() => {dispatch('edit') ; dropdownPopoverShow = false;}}
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
+			on:click={() => {
+				dispatch('edit');
+				dropdownPopoverShow = false;
+			}}
 		>
-			Eitar
+			Editar
 		</button>
 		<button
 			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-red-700"
-			on:click={() => {dispatch('delete'); dropdownPopoverShow = false;}}
+			on:click={() => {
+				dispatch('delete');
+				dropdownPopoverShow = false;
+			}}
 		>
 			Eliminar
 		</button>

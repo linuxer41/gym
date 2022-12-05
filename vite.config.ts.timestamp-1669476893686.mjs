@@ -1,10 +1,8 @@
 // vite.config.ts
-import { sveltekit } from "file:///H:/fullstack/gym/node_modules/@sveltejs/kit/src/exports/vite/index.js";
+import { sveltekit } from 'file:///H:/fullstack/gym/node_modules/@sveltejs/kit/src/exports/vite/index.js';
 var config = {
-  plugins: [sveltekit()]
+	plugins: [sveltekit()]
 };
 var vite_config_default = config;
-export {
-  vite_config_default as default
-};
+export { vite_config_default as default };
 //# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJIOlxcXFxmdWxsc3RhY2tcXFxcZ3ltXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ZpbGVuYW1lID0gXCJIOlxcXFxmdWxsc3RhY2tcXFxcZ3ltXFxcXHZpdGUuY29uZmlnLnRzXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ltcG9ydF9tZXRhX3VybCA9IFwiZmlsZTovLy9IOi9mdWxsc3RhY2svZ3ltL3ZpdGUuY29uZmlnLnRzXCI7aW1wb3J0IHsgc3ZlbHRla2l0IH0gZnJvbSAnQHN2ZWx0ZWpzL2tpdC92aXRlJztcbmltcG9ydCB0eXBlIHsgVXNlckNvbmZpZyB9IGZyb20gJ3ZpdGUnO1xuXG5jb25zdCBjb25maWc6IFVzZXJDb25maWcgPSB7XG5cdHBsdWdpbnM6IFtzdmVsdGVraXQoKV1cbn07XG5cbmV4cG9ydCBkZWZhdWx0IGNvbmZpZztcbiJdLAogICJtYXBwaW5ncyI6ICI7QUFBd08sU0FBUyxpQkFBaUI7QUFHbFEsSUFBTSxTQUFxQjtBQUFBLEVBQzFCLFNBQVMsQ0FBQyxVQUFVLENBQUM7QUFDdEI7QUFFQSxJQUFPLHNCQUFROyIsCiAgIm5hbWVzIjogW10KfQo=

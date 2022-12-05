@@ -5,14 +5,14 @@
 
 <footer class="block py-4">
 	<div class="container mx-auto px-4">
-		<hr class="mb-4 border-b-1 border-stale-200" />
+		<hr class="mb-4 border-b-1 border-slate-200" />
 		<div class="flex flex-wrap items-center md:justify-between justify-center">
 			<div class="w-full md:w-4/12 px-4">
-				<div class="text-sm text-stale-500 font-semibold py-1 text-center md:text-left">
+				<div class="text-sm text-slate-500 font-semibold py-1 text-center md:text-left">
 					Copyright © {date}
 					<a
 						href="https://www.creative-tim.com?ref=ns-footer-admin"
-						class="text-stale-500 hover:text-stale-700 text-sm font-semibold py-1"
+						class="text-slate-500 hover:text-slate-700 text-sm font-semibold py-1"
 					>
 						Iathings
 					</a>
@@ -23,7 +23,7 @@
 					<li>
 						<a
 							href="https://www.creative-tim.com?ref=ns-footer-admin"
-							class="text-stale-600 hover:text-stale-800 text-sm font-semibold block py-1 px-3"
+							class="text-slate-600 hover:text-slate-800 text-sm font-semibold block py-1 px-3"
 						>
 							Creative Tim
 						</a>
@@ -31,7 +31,7 @@
 					<li>
 						<a
 							href="https://www.creative-tim.com/presentation?ref=ns-footer-admin"
-							class="text-stale-600 hover:text-stale-800 text-sm font-semibold block py-1 px-3"
+							class="text-slate-600 hover:text-slate-800 text-sm font-semibold block py-1 px-3"
 						>
 							About Us
 						</a>
@@ -39,7 +39,7 @@
 					<li>
 						<a
 							href="http://blog.creative-tim.com?ref=ns-footer-admin"
-							class="text-stale-600 hover:text-stale-800 text-sm font-semibold block py-1 px-3"
+							class="text-slate-600 hover:text-slate-800 text-sm font-semibold block py-1 px-3"
 						>
 							Blog
 						</a>
@@ -47,7 +47,7 @@
 					<li>
 						<a
 							href="https://github.com/creativetimofficial/notus-svelte/blob/main/LICENSE.md?ref=ns-footer-admin"
-							class="text-stale-600 hover:text-stale-800 text-sm font-semibold block py-1 px-3"
+							class="text-slate-600 hover:text-slate-800 text-sm font-semibold block py-1 px-3"
 						>
 							MIT License
 						</a>

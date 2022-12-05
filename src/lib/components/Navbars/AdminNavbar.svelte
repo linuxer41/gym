@@ -22,14 +22,14 @@
 		<form class="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
 			<div class="relative flex w-full flex-wrap items-stretch">
 				<span
-					class="z-10 h-full leading-snug font-normal absolute text-center text-stale-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
+					class="z-10 h-full leading-snug font-normal absolute text-center text-slate-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
 				>
 					<i class="fas fa-search" />
 				</span>
 				<input
 					type="text"
 					placeholder="Busca aquí..."
-					class="border-0 px-3 py-3 placeholder-stale-300 text-stale-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+					class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
 				/>
 			</div>
 		</form>

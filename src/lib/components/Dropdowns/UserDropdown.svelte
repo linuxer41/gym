@@ -26,14 +26,14 @@
 
 <div>
 	<a
-		class="text-stale-500 block"
+		class="text-slate-500 block"
 		href="#pablo"
 		bind:this={btnDropdownRef}
 		on:click={toggleDropdown}
 	>
 		<div class="items-center flex">
 			<span
-				class="w-12 h-12 text-sm text-white bg-stale-200 inline-flex items-center justify-center rounded-full"
+				class="w-12 h-12 text-sm text-white bg-slate-200 inline-flex items-center justify-center rounded-full"
 			>
 				<img alt="..." class="w-full rounded-full align-middle border-none shadow-lg" src={image} />
 			</span>
@@ -48,7 +48,7 @@
 		<a
 			href="#pablo"
 			on:click={(e) => e.preventDefault()}
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Salir
 		</a>

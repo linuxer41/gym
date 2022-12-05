@@ -24,7 +24,7 @@
 
 <div>
 	<a
-		class="lg:text-white lg:hover:text-stale-200 text-stale-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+		class="lg:text-white lg:hover:text-slate-200 text-slate-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
 		href="#pablo"
 		bind:this={btnDropdownRef}
 		on:click={toggleDropdown}
@@ -38,67 +38,67 @@
 			: 'hidden'}"
 	>
 		<span
-			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-stale-400"
+			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-slate-400"
 		>
 			Admin Layout
 		</span>
 		<a
 			href="dashboard"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Dashboard
 		</a>
 		<a
 			href="settings"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Settings
 		</a>
 		<a
 			href="tables"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Tables
 		</a>
 		<a
 			href="maps"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Maps
 		</a>
-		<div class="h-0 mx-4 my-2 border border-solid border-stale-100" />
+		<div class="h-0 mx-4 my-2 border border-solid border-slate-100" />
 		<span
-			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-stale-400"
+			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-slate-400"
 		>
 			Auth Layout
 		</span>
 		<a
 			href="/auth/login"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Login
 		</a>
 		<a
 			href="/auth/register"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Register
 		</a>
-		<div class="h-0 mx-4 my-2 border border-solid border-stale-100" />
+		<div class="h-0 mx-4 my-2 border border-solid border-slate-100" />
 		<span
-			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-stale-400"
+			class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-slate-400"
 		>
 			No Layout
 		</span>
 		<a
 			href="/landing"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Landing
 		</a>
 		<a
 			href="/profile"
-			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-stale-700"
+			class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-slate-700"
 		>
 			Profile
 		</a>

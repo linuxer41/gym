@@ -125,11 +125,10 @@ export class ElectronCapacitorApp {
 			titleBarStyle: 'hidden',
 			// transparent: true,
 			titleBarOverlay: {
-				color: 'rgba(255, 0, 0, 0.0)',
+				color: 'rgba(255, 0, 0, 0.0)'
 				// symbolColor: 'white',
 				// symbolColor: '#B3E001',
-			  }
-			
+			}
 		});
 		this.mainWindowState.manage(this.MainWindow);
 

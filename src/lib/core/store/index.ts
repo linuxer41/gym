@@ -80,7 +80,7 @@ function syncWritable<T>(init: any, _storageKey: string): SyncWritable<T> {
 				let parsed = init;
 				if (window) {
 					const _data = localStorage.getItem(_storageKey);
-					const _parsed = _data?JSON.parse(_data):null;
+					const _parsed = _data ? JSON.parse(_data) : null;
 					if (_parsed !== null && _parsed !== undefined) {
 						// ensure no load null values
 						parsed = _parsed;
@@ -120,5 +120,5 @@ export {
 	silentPrint,
 	printerName,
 	copiesPrint,
-	networkFallback,
+	networkFallback
 };

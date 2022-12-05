@@ -3,7 +3,7 @@
 	let date = new Date().getFullYear();
 </script>
 
-<footer class="relative bg-stale-200 pt-8 pb-6">
+<footer class="relative bg-slate-200 pt-8 pb-6">
 	<div
 		class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20 h-20"
 		style="transform: translateZ(0);"
@@ -17,14 +17,14 @@
 			x="0"
 			y="0"
 		>
-			<polygon class="text-stale-200 fill-current" points="2560 0 2560 100 0 100" />
+			<polygon class="text-slate-200 fill-current" points="2560 0 2560 100 0 100" />
 		</svg>
 	</div>
 	<div class="container mx-auto px-4">
 		<div class="flex flex-wrap text-center lg:text-left">
 			<div class="w-full lg:w-6/12 px-4">
 				<h4 class="text-3xl font-semibold">Let's keep in touch!</h4>
-				<h5 class="text-lg mt-0 mb-2 text-stale-600">
+				<h5 class="text-lg mt-0 mb-2 text-slate-600">
 					Find us on any of these platforms, we respond 1-2 business days.
 				</h5>
 				<div class="mt-6 lg:mb-0 mb-6">
@@ -47,7 +47,7 @@
 						<i class="fab fa-dribbble" />
 					</button>
 					<button
-						class="bg-white text-stale-800 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
+						class="bg-white text-slate-800 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
 						type="button"
 					>
 						<i class="fab fa-github" />
@@ -57,13 +57,13 @@
 			<div class="w-full lg:w-6/12 px-4">
 				<div class="flex flex-wrap items-top mb-6">
 					<div class="w-full lg:w-4/12 px-4 ml-auto">
-						<span class="block uppercase text-stale-500 text-sm font-semibold mb-2">
+						<span class="block uppercase text-slate-500 text-sm font-semibold mb-2">
 							Useful Links
 						</span>
 						<ul class="list-unstyled">
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://www.creative-tim.com/presentation?ref=ns-footer"
 								>
 									About Us
@@ -71,7 +71,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://blog.creative-tim.com?ref=ns-footer"
 								>
 									Blog
@@ -79,7 +79,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://www.github.com/creativetimofficial?ref=ns-footer"
 								>
 									Github
@@ -87,7 +87,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://www.creative-tim.com/bootstrap-themes/free?ref=ns-footer"
 								>
 									Free Products
@@ -96,13 +96,13 @@
 						</ul>
 					</div>
 					<div class="w-full lg:w-4/12 px-4">
-						<span class="block uppercase text-stale-500 text-sm font-semibold mb-2">
+						<span class="block uppercase text-slate-500 text-sm font-semibold mb-2">
 							Other Resources
 						</span>
 						<ul class="list-unstyled">
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://github.com/creativetimofficial/notus-svelte/blob/main/LICENSE.md?ref=ns-footer"
 								>
 									MIT License
@@ -110,7 +110,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://creative-tim.com/terms?ref=ns-footer"
 								>
 									Terms & Conditions
@@ -118,7 +118,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://creative-tim.com/privacy?ref=ns-footer"
 								>
 									Privacy Policy
@@ -126,7 +126,7 @@
 							</li>
 							<li>
 								<a
-									class="text-stale-600 hover:text-stale-800 font-semibold block pb-2 text-sm"
+									class="text-slate-600 hover:text-slate-800 font-semibold block pb-2 text-sm"
 									href="https://creative-tim.com/contact-us?ref=ns-footer"
 								>
 									Contact Us
@@ -137,14 +137,14 @@
 				</div>
 			</div>
 		</div>
-		<hr class="my-6 border-stale-300" />
+		<hr class="my-6 border-slate-300" />
 		<div class="flex flex-wrap items-center md:justify-between justify-center">
 			<div class="w-full md:w-4/12 px-4 mx-auto text-center">
-				<div class="text-sm text-stale-500 font-semibold py-1">
+				<div class="text-sm text-slate-500 font-semibold py-1">
 					Copyright © {date} Notus Svelte by
 					<a
 						href="https://www.creative-tim.com?ref=ns-footer"
-						class="text-stale-500 hover:text-stale-800"
+						class="text-slate-500 hover:text-slate-800"
 					>
 						Creative Tim
 					</a>
