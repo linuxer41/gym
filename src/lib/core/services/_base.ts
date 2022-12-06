@@ -10,10 +10,23 @@ const axiosInstance = axios.create({
 	baseURL: settings.apiUrl,
 	headers: {
 		'Content-Type': 'application/json',
-		Accept: 'application/json',
-		Authorization: `Bearer ${get(authToken)}`
+		Accept: 'application/json'
+		// Authorization: `Bearer ${get(authToken)}`
 	}
 });
+axiosInstance.interceptors.request.use(
+	(config) => {
+		config.headers
+			? (config.headers.Authorization = `Bearer ${get(authToken)}`)
+			: (config.headers = {
+					Authorization: `Bearer ${get(authToken)}`
+			  });
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
 
 const postgrestClient = create({
 	axiosInstance

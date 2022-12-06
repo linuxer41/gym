@@ -125,11 +125,14 @@
 		</div>
 		<button>
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<span class="text-red-500 mr-2 text-sm font-bold" on:click={async()=>{
-				authToken.flush();
-				storeUser.flush();
-				await goto('/auth');
-			}}>
+			<span
+				class="text-red-500 mr-2 text-sm font-bold"
+				on:click={async () => {
+					authToken.flush();
+					storeUser.flush();
+					await goto('/auth');
+				}}
+			>
 				Salir
 			</span>
 		</button>

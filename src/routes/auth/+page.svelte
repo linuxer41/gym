@@ -14,7 +14,10 @@
 			if (!response.ok) throw new Error('Credenciales incorrectos');
 			const data: { user: User; token: string } = await response.json();
 			authToken.sync(data.token);
+
 			storeUser.sync(data.user);
+			console.log($authToken);
+			console.log($storeUser);
 			await goto('/');
 		} catch (error: any) {
 			snackBar.show({
