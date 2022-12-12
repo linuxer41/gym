@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Asistance from '$lib/components/home/Attendance.svelte';
+	import Assistance from '$lib/components/home/Attendance.svelte';
 	import Inscription from '$lib/components/home/Inscription.svelte';
 	import Permission from '$lib/components/home/Permission.svelte';
 	import { fly } from 'svelte/transition';
@@ -8,38 +8,39 @@
 	const cards = [
 		{
 			title: 'Asistencia',
-			subtitle: 'Registart asistencia',
+			subtitle: 'Registrar asistencia',
 			icon: 'fas fa-users',
 			iconColor: 'text-orange-500',
-			component: Asistance,
+			component: Assistance,
 			props: {
 				title: 'Asistencia',
 				type: 'attendance'
-			},
-			shorcut: 'F7'
+			} as any,
+			shortcut: 'F7'
 		},
 		{
 			title: 'Admisión',
-			subtitle: 'Nueva admisione de los cliente',
+			subtitle: 'Admisión de clienteS',
 			icon: 'fas fa-user-plus',
 			iconColor: 'text-slate-500',
 			component: Inscription,
 			props: {
-				title: 'Nueva admisión'
-			},
-			shorcut: 'F8'
+				title: 'Nueva admisión',
+				type: 'inscription'
+			} as any,
+			shortcut: 'F8'
 		},
 		{
 			title: 'Permiso',
 			subtitle: 'Registrar permisos',
 			icon: 'fas fa-user-clock',
 			iconColor: 'text-emerald-500',
-			component: Asistance,
+			component: Assistance,
 			props: {
 				title: 'Registrar permiso',
 				type: 'permission'
-			},
-			shorcut: 'F9'
+			} as any,
+			shortcut: 'F9'
 		}
 	];
 	let targetCard: typeof cards[number] | null;
@@ -82,7 +83,7 @@
 					<span class="text-sm font-bold">{card.subtitle}</span>
 					<span class="text-2xl font-bold">{card.title}</span>
 					<span class="text-sm text-slate-700 font-bold bg-slate-100 mx-auto px-3 rounded-sm"
-						>{card.shorcut}</span
+						>{card.shortcut}</span
 					>
 				</div>
 			</div>

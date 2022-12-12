@@ -45,6 +45,19 @@ BEGIN
 END;
 $$ language plpgsql;
 
+-- create get client function
+create or replace function functions.get_client_by_dni(
+    dni text
+) returns api.clients as $$
+declare
+    client_record api.clients;
+BEGIN
+    select * from api.clients where clients.dni = get_client_by_dni.dni limit 1
+    into client_record;
+    return client_record;
+END;
+$$ language plpgsql;
+
 -- create get date subscription attendance function
 create or replace function functions.get_date_subscription_attendance(
     subscription_id uuid,

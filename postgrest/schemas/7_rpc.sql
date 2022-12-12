@@ -95,12 +95,21 @@ BEGIN
     if admission is null or admission->'client' is null then
         raise null_value_not_allowed using message = 'client is required';
     end if;
-    -- create client
-    insert into api.clients (name, phone, address, dni, email)
-    values (admission->'client'->>'name', admission->'client'->>'phone', admission->'client'->>'address', admission->'client'->>'dni', admission->'client'->>'email')
-    returning * into client_record;
+    -- check if client exists
+    client_record := functions.get_client_by_dni(admission->'client'->>'dni');
+    -- create client if not exists
+    if client_record.id is null then
+        insert into api.clients (name, phone, address, dni, email)
+        values (admission->'client'->>'name', admission->'client'->>'phone', admission->'client'->>'address', admission->'client'->>'dni', admission->'client'->>'email')
+        returning * into client_record;
+    end if;
     -- create subscription if client was created and admission has subscription
     if client_record.id is not null and admission->'subscription' is not null then
+        -- check if client has a subscription
+        subscription_record := functions.check_client_subscription(client_record.id);
+        if subscription_record.id is not null then
+            raise exception using message = 'El cliente ya tiene una suscripción activa: finaliza en ' || subscription_record.end_date;
+        end if;
         insert into api.subscriptions (client_id, membership_id, start_date, end_date, price, payment_amount, balance)
         values (client_record.id, (admission->'subscription'->>'membership_id')::uuid, (admission->'subscription'->>'start_date')::date, (admission->'subscription'->>'end_date')::date, (admission->'subscription'->>'price')::numeric, (admission->'subscription'->>'payment_amount')::numeric, (admission->'subscription'->>'balance')::numeric)
         returning * into subscription_record;

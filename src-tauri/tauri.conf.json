@@ -58,7 +58,9 @@
         "height": 600,
         "resizable": true,
         "title": "gym",
-        "width": 800
+        "hiddenTitle": true,
+        "width": 800,
+        "titleBarStyle": "Overlay"
       }
     ]
   }

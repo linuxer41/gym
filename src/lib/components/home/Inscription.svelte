@@ -14,10 +14,12 @@
 	import { addDays, format } from 'date-fns';
 	import SubscriberTable from '../tables/SubscriberTable.svelte';
 	export let title = 'Formulario';
+	export let type: 'inscription' = 'inscription';
+	export let alreadyExists = false;
 	const dispatch = createEventDispatcher();
 	let data: Client = {} as any;
 	let form: HTMLFormElement;
-	let hasSuscription = true;
+	let hasSubscription = true;
 	let memberships: MembershipJoined[] = [];
 	let subscription: Subscription = {} as any;
 	let selectedMembership: MembershipJoined = {} as any;
@@ -25,19 +27,69 @@
 	let subscribers: Subscriber[] = [];
 	let referredSubscribers: Subscriber[] = [];
 
+	function debounce(func: Function, wait: number, immediate: boolean) {
+		let timeout: any;
+		return  () => {
+			// @ts-ignore
+			const context = this;
+			const args = arguments;
+			const later = function () {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			const callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	}
+
+	// debounce search
+	const onDniChange = debounce(async () => {
+		if (data.dni && data.dni?.length > 2) {
+			await checkClient();
+		}
+	}, 500, false);
+
+
+	async function checkClient() {
+		try {
+			alreadyExists = false;
+			if (data.dni) {
+				const client = await clientService.get(data.dni, 'dni')
+				if (client) {
+					data = client;
+					alreadyExists = true;
+					snackBar.show({
+						message: 'Ya existe un cliente con el mismo DNI: ' + data.dni,
+						type: 'info'
+					});
+					return client;
+				}
+			}
+			return null;
+		} catch (error) {
+			console.debug(error)
+		}
+	}
+
 	async function create() {
 		try {
 			// validate form data
 			if (!form.checkValidity()) {
 				throw new Error('Formulario invalido o incompleto');
 			}
-			if (data.dni && !!(await clientService.get(data.dni, 'dni'))) {
-				throw new Error('Ya existe un cliente con el mismo DNI: ' + data.dni);
-			}
 			const to_admit: any = {
 				client: data
 			};
-			if (selectedMembership && hasSuscription) {
+			const client = await checkClient();
+			if (data.dni && !!(client)) {
+				to_admit.client = client;
+				// return;
+				// throw new Error('Ya existe un cliente con el mismo DNI: ' + data.dni);
+			}
+
+			if (selectedMembership && hasSubscription) {
 				const now = new Date();
 				const end =
 					selectedMembership.duration === 1
@@ -159,30 +211,31 @@
 	<form bind:this={form}>
 		<h6 class="text-slate-400 text-sm mt-3 mb-6 font-bold uppercase">Informacion del cliente</h6>
 		<div class="flex flex-wrap">
+			<TextField label="CI" bind:value={data.dni} required on:input={onDniChange} />
 			<TextField label="Nombre" bind:value={data.name} required />
-			<TextField label="CI" bind:value={data.dni} required />
-			<TextField label="Telefono" bind:value={data.phone} placeholder="" />
+			
+			<TextField label="Teléfono" bind:value={data.phone} placeholder="" />
 			<TextField label="Email" bind:value={data.email} placeholder="" />
-			<TextField label="Direccion" bind:value={data.address} placeholder="" />
+			<TextField label="Dirección" bind:value={data.address} placeholder="" />
 		</div>
 
 		<hr class="mt-6 border-b-1 border-slate-300" />
 		<div class="mt-3 mb-6 flex place-content-between items-center">
 			<h6 class="text-slate-400 text-sm font-bold uppercase">Suscripcion</h6>
 			<i
-				class="fas fa-toggle-{hasSuscription ? 'on' : 'off'} text-lime-{hasSuscription
+				class="fas fa-toggle-{hasSubscription ? 'on' : 'off'} text-lime-{hasSubscription
 					? '500'
 					: '100'} text-2xl"
-				on:click={() => (hasSuscription = !hasSuscription)}
+				on:click={() => (hasSubscription = !hasSubscription)}
 				on:keyup={null}
 			/>
 		</div>
-		{#if hasSuscription}
+		{#if hasSubscription}
 			<div class="flex flex-wrap" transition:fly={{ y: 100, duration: 500 }}>
 				<div class="w-full lg:w-6/12 px-4">
 					<div class="relative w-full mb-3">
 						<label class="block uppercase text-slate-600 text-xs font-bold mb-2" for="grid-phone">
-							Membresia
+							Membresía
 						</label>
 						<select
 							id="grid-prone"
@@ -199,7 +252,7 @@
 								}
 							}}
 						>
-							<option value="">Seleccione una membrecia</option>
+							<option value="">Seleccione una membrecía</option>
 							{#each memberships as membership, i}
 								<option selected={membership.id === selectedMembership.id} value={membership.id}
 									>{membership.name} - {membership.plan?.name}</option
