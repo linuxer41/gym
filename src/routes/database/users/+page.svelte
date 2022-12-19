@@ -9,10 +9,30 @@
 	let totalCount = 0;
 	let showCreateForm = false;
 	let toEdit: User | null = null;
+	let keyword = '';
 	async function load() {
 		try {
 			const res = await userService.query({
-				orderBy: 'name'
+				orderBy: 'name',
+				or: [
+					{
+						field: 'name',
+						value: keyword,
+						operator: 'ilike'
+					},
+					{
+						field: 'email',
+						value: keyword,
+						operator: 'ilike'
+					},
+					{
+						field: 'dni',
+						value: keyword,
+						operator: 'ilike'
+					}
+				],
+				pageSize: 10,
+				page: 0
 			});
 			users = res.data;
 			totalCount = res.totalLength;
@@ -22,6 +42,7 @@
 			loading = false;
 		}
 	}
+
 	onMount(async () => {
 		await load();
 	});
@@ -39,6 +60,10 @@
 					type="text"
 					class="w-full py-2 pl-8 pr-3 text-slate-900 placeholder-slate-500 bg-slate-100 rounded-lg focus:outline-none focus:placeholder-slate-400 "
 					placeholder="Buscar"
+					bind:value={keyword}
+					on:keyup={async () => {
+						await load();
+					}}
 				/>
 			</div>
 		</div>

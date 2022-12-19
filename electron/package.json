@@ -1,7 +1,7 @@
 {
 	"name": "gym",
-	"version": "1.0.2",
-	"description": "Gistema de gestion GYM",
+	"version": "1.0.3",
+	"description": "Sistema de gestión GYM",
 	"author": {
 		"name": "iathings",
 		"email": "support@iathings.com"

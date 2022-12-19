@@ -16,8 +16,6 @@
 			authToken.sync(data.token);
 
 			storeUser.sync(data.user);
-			console.log($authToken);
-			console.log($storeUser);
 			await goto('/');
 		} catch (error: any) {
 			snackBar.show({

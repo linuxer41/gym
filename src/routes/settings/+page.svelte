@@ -57,7 +57,7 @@
 	});
 </script>
 
-<div class="grid gap-6 p-6 w-full h-full overflow-auto">
+<div id="content" class="bg-white col-span-9 p-6 overflow-auto">
 	<!-- create plan cards -->
 	<div class="w-full h-full rounded bg-white p-3 grid  content-start">
 		<div class="grid gap-3 content-start">

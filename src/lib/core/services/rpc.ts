@@ -53,6 +53,12 @@ class RpcService {
 			body: JSON.stringify(data)
 		});
 	}
+	statistics(data: { start_date: string; end_date: string }): Promise<Response> {
+		return this.fetch(`resume`, {
+			method: 'POST',
+			body: JSON.stringify(data)
+		});
+	}
 }
 
 export const rpcService = new RpcService();

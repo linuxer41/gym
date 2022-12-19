@@ -1,6 +1,6 @@
 {
 	"name": "gym",
-	"version": "0.0.1",
+	"version": "0.0.4",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -34,6 +34,7 @@
 		"eslint": "^8.16.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"flatpickr": "^4.6.13",
 		"node-sass": "^8.0.0",
 		"postcss": "^8.4.19",
 		"postgrester": "^2.1.1",

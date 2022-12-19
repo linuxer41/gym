@@ -6,6 +6,7 @@
 	export let color = 'light';
 	export let title = 'Clientes';
 	import { format } from 'date-fns';
+	export let selected: Subscriber;
 	import TableDropdown from '../Dropdowns/TableDropdown.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -36,6 +37,7 @@
 	}
 
 	function round(value: number, decimals = 2) {
+		// @ts-ignore
 		return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 	}
 
@@ -47,6 +49,37 @@
 		}
 		return percentage;
 	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		// hancle arrow up and arrow down navigate to selected item
+		switch (event.key) {
+			case 'ArrowUp':
+				event.preventDefault();
+				if(!selected) selected = data[0];
+				if(selected === data[0]) return;
+				selected = data[data.indexOf(selected) - 1];
+				break;
+			case 'ArrowDown':
+				event.preventDefault();
+				if(!selected) selected = data[0];
+				if(selected === data[data.length - 1]) return;
+				selected = data[data.indexOf(selected) + 1];
+				break;
+		}
+		if (event.key === 'Enter') {
+			dispatch('select', selected);
+		}
+		// get data-selected attribute for selected item and scroll to it
+		const selectedElement = document.querySelector(`[data-selected="true"]`);
+		if (selectedElement) {
+			selectedElement.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'nearest',
+			});
+		}
+	}
+
 </script>
 
 <div
@@ -126,8 +159,10 @@
 					<tr
 						data-id={item.id}
 						on:click={() => {
+							selected = item;
 							dispatch('select', item);
 						}}
+						data-selected={selected && selected.id === item.id}
 					>
 						<th
 							class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center"
@@ -183,6 +218,15 @@
 						</td>
 						<!-- checked indicator -->
 						<td
+							class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-center"
+						>
+							{#if selected === item}
+								<i class="fas fa-check text-emerald-500 mr-4" />
+							<!-- {:else}
+								<i class="fas fa-times text-red-500 mr-4" /> -->
+							{/if}
+						</td>
+						<!-- <td
 							class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right"
 						>
 							<TableDropdown
@@ -193,13 +237,14 @@
 									dispatch('edit', item);
 								}}
 							/>
-						</td>
+						</td> -->
 					</tr>
 				{/each}
 			</tbody>
 		</table>
 	</div>
 </div>
+<svelte:window on:keydown={handleKeyDown} />
 
 <style>
 	.custom-box-shadow {

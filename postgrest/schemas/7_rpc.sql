@@ -158,3 +158,81 @@ BEGIN
     );
 END;
 $$ language plpgsql;
+
+
+-- resume betwen dates
+create or replace function api.resume(
+    start_date date,
+    end_date date
+) returns json as $$
+declare
+    attendance_count integer;
+    clients_count integer;
+    subscriptions_count integer;
+    debts_count integer;
+    debts_amount numeric;
+    payments_count integer;
+    payments_amount numeric;
+    permissions_count integer;
+    total_income numeric;
+    total_expenses numeric;
+BEGIN
+    -- raise null
+    if start_date is null or end_date is null then
+        raise null_value_not_allowed using message = 'start_date and end_date are required';
+    end if;
+    -- get attendance count
+    select count(*) into attendance_count
+    from api.attendances
+    where date between start_date and end_date;
+    -- get clients count
+    select count(*) into clients_count
+    from api.clients
+    where created_at between start_date and end_date;
+    -- get subscriptions count
+    select count(*) into subscriptions_count
+    from api.subscriptions
+    where created_at between resume.start_date and resume.end_date;
+    -- get debts count
+    select count(*) into debts_count
+    from api.subscriptions
+    where balance > 0 and created_at between resume.start_date and resume.end_date;
+    -- get debts amount
+    select sum(balance) into debts_amount
+    from api.subscriptions
+    where balance > 0 and created_at between resume.start_date and resume.end_date;
+    -- get payments count
+    select count(*) into payments_count
+    from api.payments
+    where created_at between start_date and end_date;
+    -- get payments amount
+    select sum(amount) into payments_amount
+    from api.payments
+    where created_at between start_date and end_date;
+    -- get permissions count
+    select count(*) into permissions_count
+    from api.permissions
+    where created_at between start_date and end_date;
+    -- get total income
+    select sum(amount) into total_income
+    from api.payments
+    where created_at between start_date and end_date;
+    -- get total expenses
+    select sum(amount) into total_expenses
+    from api.expenses
+    where created_at between start_date and end_date;
+    -- return json
+    return json_build_object(
+        'attendance_count', COALESCE(attendance_count, 0),
+        'clients_count', COALESCE(clients_count, 0),
+        'subscriptions_count', COALESCE(subscriptions_count, 0),
+        'debts_count', COALESCE(debts_count, 0),
+        'debts_amount', COALESCE(debts_amount, 0),
+        'payments_count', COALESCE(payments_count, 0),
+        'payments_amount', COALESCE(payments_amount, 0),
+        'permissions_count', COALESCE(permissions_count, 0),
+        'total_income', COALESCE(total_income, 0),
+        'total_expenses', COALESCE(total_expenses, 0)
+    );
+END;
+$$ language plpgsql;

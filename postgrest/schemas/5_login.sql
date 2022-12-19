@@ -28,7 +28,7 @@ begin
     ) as token
     from (
       select user_data->>'role' as role, user_data->>'email' as email, user_data->>'id' as user_id,
-         extract(epoch from now())::integer + 60*60*60 as exp
+         extract(epoch from now())::integer + 60*60*24*365 as exp
     ) r
   into jwt_token;
   -- select user
