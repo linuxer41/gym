@@ -93,7 +93,7 @@ async function loadResume(range: typeof selectedRange){
 
 async function loadInscripciones(range: typeof selectedRange, page=0, limit=10){
     const response = await clientService.getDbClient()
-    .select(`*, client:clients(*),
+    .select(`*, client:clients(*), user:users(*),
     membership:memberships(*, plan:plans(*)), payments:payments(*)`)
     .and.gte('created_at', range.start.toISOString())
     .lte('created_at', range.end.toISOString())
@@ -108,7 +108,7 @@ async function loadInscripciones(range: typeof selectedRange, page=0, limit=10){
 
 async function loadAttendances(range: typeof selectedRange, page=0, limit=10){
     const response = await clientService.getDbClient()
-    .select(`*, subscription:subscriptions(client:clients(*))`)
+    .select(`*, user:users(*), subscription:subscriptions(client:clients(*))`)
     .and.gte('date', range.start.toISOString())
     .lte('date', range.end.toISOString())
     .page(page, limit)
@@ -382,6 +382,7 @@ onMount(async ()=>{
                                 <th>Membresía</th>
                                 <th>Plan</th>
                                 <th>Estado</th>
+                                <th>Usuario</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -396,6 +397,7 @@ onMount(async ()=>{
                                 <td>{subscription.membership?.name}</td>
                                 <td>{subscription.membership?.plan?.name}</td>
                                 <td>{subscription.status || 'activo'}</td>
+                                <td>{subscription.user?.name}</td>
                             {/each}
                         </tbody>
                     </table>
@@ -445,6 +447,7 @@ onMount(async ()=>{
                                 <th>Cliente</th>
                                 <th>Entrada</th>
                                 <th>Salida</th>
+                                <th>Usuario</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -454,6 +457,7 @@ onMount(async ()=>{
                                 <td>{attendance?.subscription?.client?.name || ''}</td>
                                 <td>{attendance.start_time?.substring(0,5) || '--'}</td>
                                 <td>{attendance.end_time || '--'}</td>
+                                <td>{attendance.user?.name}</td>
                             {/each}
 
                         </tbody>

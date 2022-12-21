@@ -59,6 +59,22 @@
 						Gym
 					</a>
 				</li>
+				<!-- cash register -->
+				<li class="items-center">
+					<a
+						href="/cash-register"
+						class="text-xs uppercase py-3 font-bold block {pathname === '/cash-register'
+							? 'text-lime-500 hover:text-lime-600'
+							: 'text-slate-700 hover:text-slate-500'}"
+					>
+						<i
+							class="fas fa-cash-register mr-2 text-sm {pathname === '/cash-register'
+								? 'opacity-75'
+								: 'text-slate-300'}"
+						/>
+						Caja
+					</a>
+				</li>
 				<li class="items-center">
 					<a
 						href="/statistics"
@@ -105,8 +121,10 @@
 			<ul class="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
 				<li class="items-center">
 					<a
-						class="text-slate-700 hover:text-slate-500 text-xs uppercase py-3 font-bold block"
-						href="/database/clients"
+						href="/clients"
+						class="text-xs uppercase py-3 font-bold block {pathname === '/clients'
+							? 'text-lime-500 hover:text-lime-600'
+							: 'text-slate-700 hover:text-slate-500'}"
 					>
 						<i class="fas fa-users text-slate-300 mr-2 text-sm" />
 						Clientes
@@ -114,8 +132,10 @@
 				</li>
 				<li class="items-center">
 					<a
-						class="text-slate-700 hover:text-slate-500 text-xs uppercase py-3 font-bold block"
-						href="/database/users"
+						href="/users"
+						class="text-xs uppercase py-3 font-bold block {pathname === '/users'
+							? 'text-lime-500 hover:text-lime-600'
+							: 'text-slate-700 hover:text-slate-500'}"
 					>
 						<i class="fas fa-user text-slate-300 mr-2 text-sm" />
 						Usuarios

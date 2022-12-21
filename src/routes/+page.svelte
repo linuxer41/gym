@@ -1,26 +1,15 @@
 <script lang="ts">
-	import Assistance from '$lib/components/home/Attendance.svelte';
-	import Inscription from '$lib/components/home/Inscription.svelte';
 	import Permission from '$lib/components/home/Permission.svelte';
+	import Inscription from '$lib/components/home/Inscription.svelte';
 	import { fly } from 'svelte/transition';
+	import Attendance from '$lib/components/home/Attendance.svelte';
 
 	// core components
 	const cards = [
-		{
-			title: 'Asistencia',
-			subtitle: 'Registrar asistencia',
-			icon: 'fas fa-users',
-			iconColor: 'text-orange-500',
-			component: Assistance,
-			props: {
-				title: 'Asistencia',
-				type: 'attendance'
-			} as any,
-			shortcut: 'F7'
-		},
+
 		{
 			title: 'Admisión',
-			subtitle: 'Admisión de clienteS',
+			subtitle: 'Admisión de clientes',
 			icon: 'fas fa-user-plus',
 			iconColor: 'text-slate-500',
 			component: Inscription,
@@ -28,19 +17,19 @@
 				title: 'Nueva admisión',
 				type: 'inscription'
 			} as any,
-			shortcut: 'F8'
+			shortcut: 'F7'
 		},
 		{
 			title: 'Permiso',
 			subtitle: 'Registrar permisos',
 			icon: 'fas fa-user-clock',
 			iconColor: 'text-emerald-500',
-			component: Assistance,
+			component: Permission,
 			props: {
 				title: 'Registrar permiso',
 				type: 'permission'
 			} as any,
-			shortcut: 'F9'
+			shortcut: 'F8'
 		}
 	];
 	let targetCard: typeof cards[number] | null;
@@ -67,7 +56,7 @@
 	$: console.log(panelHeight);
 </script>
 
-<div class="grid grid-rows[auto_1fr]  w-full h-screen place overflow-hidden">
+<div class="grid grid-rows-[auto_1fr] w-full h-screen place overflow-hidden">
 	<div class="p-6 grid gap-6 custom-grid-place" bind:clientHeight={panelHeight}>
 		<!-- create a 3 cards -->
 		{#each cards as card}
@@ -89,6 +78,7 @@
 			</div>
 		{/each}
 	</div>
+	<Attendance title="Asistencia" type="attendance" />
 	{#key targetCard}
 		{#if targetCard}
 			<svelte:component

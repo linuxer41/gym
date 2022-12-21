@@ -3,19 +3,16 @@
 		clientService,
 		membershipService,
 		rpcService,
-		subscriberService,
-		subscriptionService
+		subscriberService
 	} from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
-	import { fly } from 'svelte/transition';
-	import TextField from '../forms/inputs/TextField.svelte';
-	import FormLayer from '../forms/FormLayer.svelte';
-	import { createEventDispatcher, onMount } from 'svelte';
 	import { addDays, format } from 'date-fns';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import FormLayer from '../forms/FormLayer.svelte';
+	import TextField from '../forms/inputs/TextField.svelte';
 	import SubscriberTable from '../tables/SubscriberTable.svelte';
-	import da from 'date-fns/locale/da';
 	export let title = 'Formulario';
-	export let type: 'inscription' = 'inscription';
 	export let alreadyExists = false;
 	const dispatch = createEventDispatcher();
 	let data: Client = {} as any;

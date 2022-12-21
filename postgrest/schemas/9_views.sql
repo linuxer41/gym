@@ -80,3 +80,17 @@ left join (
     where not api.client_subscriptions.expired and api.client_subscriptions.is_active
     group by client_subscriptions.client_id
 ) as active_subscription on api.clients.id = active_subscription.client_id;
+
+
+-- cash flow view group by date and grouded by user_id
+create or replace view api.cash_flow as
+select sum(api.payments.amount) as amount,
+api.payments.created_at::date as date,
+api.payments.user_id as user_id,
+array_agg(api.payments.*) as payments,
+count(api.payments.*) as payments_count,
+(array_agg(api.users.name))[1] as user_name
+from api.payments
+inner join api.users on api.payments.user_id = api.users.id
+group by api.payments.created_at::date, api.payments.user_id
+order by api.payments.created_at::date desc;

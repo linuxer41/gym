@@ -5,6 +5,8 @@
 	import TextField from '../forms/inputs/TextField.svelte';
 	import SubscriberTable from '../tables/SubscriberTable.svelte';
 	import { format } from 'date-fns';
+	import ClientResult from '../profile/ClientResult.svelte';
+	import { onMount } from 'svelte';
 	export let title = 'Formulario';
 	export let type: 'attendance' | 'permission' = 'attendance';
 	let subscribers: Subscriber[] = [];
@@ -43,6 +45,9 @@
 						: 'Permiso registrado con exito',
 				type: 'success'
 			});
+			keyword = '';
+			selectedSubscriber = null as any;
+			focus()
 		} catch (error: any) {
 			console.debug(error);
 			snackBar.show({
@@ -54,23 +59,24 @@
 
 	async function searchSubscriber() {
 		try {
+			selectedSubscriber = null as any;
 			subscribers = (
 				await subscriberService.query({
 					or: [
 						{
 							field: 'name',
 							value: keyword,
-							operator: 'ilike'
+							operator: 'eq'
 						},
 						{
 							field: 'access_code',
 							value: keyword,
-							operator: 'ilike'
+							operator: 'eq'
 						},
 						{
 							field: 'dni',
 							value: keyword,
-							operator: 'ilike'
+							operator: 'eq'
 						}
 					],
 					pageSize: 10,
@@ -87,34 +93,62 @@
 			});
 		}
 	}
+	function focus(){
+		const inputs = form?.querySelectorAll('input');
+		if (inputs.length > 0) {
+			(inputs[0] as HTMLInputElement).focus();
+		}
+	}
+	onMount(() => {
+		// get form and focus on first input
+		focus()
+	});
 </script>
 
-<FormLayer
-	{title}
-	on:confirm={async () => {
-		await submit();
-	}}
-	on:close
->
-	<form bind:this={form}>
-		<h6 class="text-slate-400 text-sm mt-3 mb-6 font-bold uppercase">Cliente</h6>
-		<div class="flex flex-wrap">
-			<TextField
-				label="Nombre"
-				bind:value={keyword}
-				on:input={searchSubscriber}
-				required
-				type="search"
-			/>
-			{#if type === 'permission'}
-				<TextField label="Dias" bind:value={permissionDays} required type="number" />
-				<TextField label="Fecha de inicio" bind:value={start_date} required type="date" />
-			{/if}
+
+<form class="bg-white" bind:this={form}>
+	<h1 class="text-2xl font-bold text-center">{title || 'Asistencia'}</h1>
+	<div class="flex flex-wrap sticky top-0 bg-white">
+		<TextField
+			label="CI / DNI"
+			bind:value={keyword}
+			on:input={searchSubscriber}
+			required
+			type="search"
+		/>
+		<div class="w-full lg:w-6/12 px-4">
+			<div class="grid place-content-end h-full w-full">
+				<!-- button -->
+				<button
+					type="button"
+					class="bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+					on:click={submit}
+				>
+					{#if type === 'attendance'}
+						Registrar asistencia
+					{:else}
+						Registrar permiso
+					{/if}
+				</button>
+			</div>
 		</div>
-		<h6 class="text-slate-400 text-sm mt-3 mb-6 font-bold uppercase">Resultados</h6>
-		<div class="flex flex-wrap overflow-auto w-full h-full">
-			<!-- create susbcribers table w-full -->
-			<SubscriberTable on:select={submit} data={subscribers} bind:selected={selectedSubscriber} />
-		</div>
-	</form>
-</FormLayer>
+	</div>
+	{#if selectedSubscriber}
+	<ClientResult subscriber={selectedSubscriber} ></ClientResult>
+	{/if}
+</form>
+<svelte:window on:keydown={e => {
+	if (e.key === 'Enter') {
+		submit();
+	}
+}} />
+<style>
+	form{
+		height: 100%;
+		margin: 1.5rem;
+		width: calc(100% - 3rem);
+		height: calc(100% - 3rem);
+		overflow: auto;
+		border-radius: 1rem;
+	}
+</style>

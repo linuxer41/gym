@@ -19,8 +19,8 @@ BEGIN
         raise exception using message = 'No tiene permiso para asistir';
     end if;
     -- create attendance
-    insert into api.attendances (subscription_id, date, start_time)
-    values (subscription_record.id, current_date, current_time)
+    insert into api.attendances (subscription_id, date, start_time, user_id)
+    values (subscription_record.id, current_date, current_time,  (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid)
     returning * into attendance_record;
     -- return client_id
     return json_build_object(
@@ -60,8 +60,8 @@ BEGIN
             raise exception using message = 'No tiene permiso para asistir';
         end if;
         -- create permission
-        insert into api.permissions (subscription_id, date)
-        values (subscription_record.id, start_date + i)
+        insert into api.permissions (subscription_id, date, user_id)
+        values (subscription_record.id, start_date + i, (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid)
         returning * into permission_record;
         -- update subscription end_date
         update api.subscriptions
@@ -89,12 +89,20 @@ declare
     payment_record api.payments;
     attendance_record api.attendances;
     referred_subscription api.subscriptions;
-		referred_client_id text;
+	referred_client_id text;
+    current_user_id uuid;
+    first_attendance boolean default false;
 BEGIN
+    current_user_id := (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
+    -- first attendance
+    if admission->'first_attendance' is not null then
+        first_attendance := admission->'first_attendance';
+    end if;
     -- raise null
     if admission is null or admission->'client' is null then
         raise null_value_not_allowed using message = 'client is required';
     end if;
+
     -- check if client exists
     client_record := functions.get_client_by_dni(admission->'client'->>'dni');
     -- create client if not exists
@@ -110,19 +118,30 @@ BEGIN
         if subscription_record.id is not null then
             raise exception using message = 'El cliente ya tiene una suscripción activa: finaliza en ' || subscription_record.end_date;
         end if;
-        insert into api.subscriptions (client_id, membership_id, start_date, end_date, price, payment_amount, balance)
-        values (client_record.id, (admission->'subscription'->>'membership_id')::uuid, (admission->'subscription'->>'start_date')::date, (admission->'subscription'->>'end_date')::date, (admission->'subscription'->>'price')::numeric, (admission->'subscription'->>'payment_amount')::numeric, (admission->'subscription'->>'balance')::numeric)
+        insert into api.subscriptions (client_id, membership_id, start_date, end_date, price, payment_amount, balance, user_id)
+        values (
+            client_record.id, (admission->'subscription'->>'membership_id')::uuid,
+            (admission->'subscription'->>'start_date')::date, (admission->'subscription'->>'end_date')::date,
+            (admission->'subscription'->>'price')::numeric, (admission->'subscription'->>'payment_amount')::numeric,
+            (admission->'subscription'->>'balance')::numeric,
+            current_user_id
+        )
         returning * into subscription_record;
         -- create payment if subscription was created and admission has payment
         if subscription_record.id is not null and admission->'payment' is not null then
-            insert into api.payments (subscription_id, amount)
-            values (subscription_record.id, (admission->'payment'->>'amount')::numeric)
+            insert into api.payments (subscription_id, amount, user_id)
+            values (
+                subscription_record.id, (admission->'payment'->>'amount')::numeric,
+                current_user_id
+            )
             returning * into payment_record;
 
-            -- register first attendance
-            insert into api.attendances (subscription_id, date, start_time)
-            values (subscription_record.id, current_date, current_time)
-            returning * into attendance_record;
+            -- register first attendance if hast admission->>first_attendance
+            if first_attendance then
+                insert into api.attendances (subscription_id, date, start_time, user_id)
+                values (subscription_record.id, current_date, current_time, current_user_id)
+                returning * into attendance_record;
+            end if;
         end if;
     end if;
 
@@ -142,10 +161,12 @@ BEGIN
             values (client_record.id, (admission->'subscription'->>'membership_id')::uuid, (admission->'subscription'->>'start_date')::date, (admission->'subscription'->>'end_date')::date, 0, 0, 0, subscription_record.id)
             returning * into referred_subscription;
             if referred_subscription.id is not null then
-                -- register first attendance
-                insert into api.attendances (subscription_id, date, start_time)
-                values (referred_subscription.id, current_date, current_time)
-                returning * into attendance_record;
+                -- register first attendance if hast admission->>first_attendance
+                if first_attendance then
+                    insert into api.attendances (subscription_id, date, start_time, user_id)
+                    values (referred_subscription.id, current_date, current_time, current_user_id)
+                    returning * into attendance_record;
+                end if;
             end if;
         end loop;
     end if;
@@ -236,3 +257,6 @@ BEGIN
     );
 END;
 $$ language plpgsql;
+
+
+-- cash flow betwen dates group by date and 

@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	const team1 = '../assets/img/team-1-800x800.jpg';
+	import { format } from 'date-fns';
 	export let data: Subscriber[] = [];
-	// can be one of light or dark
 	export let color = 'light';
 	export let title = 'Clientes';
-	import { format } from 'date-fns';
-	export let selected: Subscriber;
-	import TableDropdown from '../Dropdowns/TableDropdown.svelte';
+	export let selected: Subscriber = null as any;
+	const team1 = '../assets/img/team-1-800x800.jpg';
 	const dispatch = createEventDispatcher();
 
 	function getTodayStatus(subscriber: Subscriber) {

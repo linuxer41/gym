@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { clientService } from "$lib/core/services";
 	import { getDaysInMonth, getWeek, getWeeksInMonth, isBefore, isWithinInterval } from "date-fns";
 	import { createEventDispatcher } from "svelte";
-	import { current_component } from "svelte/internal";
+	import { current_component, onMount } from "svelte/internal";
 
 	export let subscriber: Subscriber;
     const dispatch = createEventDispatcher();
@@ -49,56 +50,40 @@
         });
         return dates;
     }
-    console.log(getDates());
-
-
     function getBgColorRange(subscription: Subscription, date: string) {
 
-if (isWithinInterval(new Date(date), {
-    start: new Date(subscription.start_date),
-    end: new Date(subscription.end_date)
-})) {
-    return 'bg-blue-100';
-}
-return 'bg-gray-100';
-}
-function getBgColor(subscription: Subscription, date: string, attendances: Attendance[] = [], permissions: Permission[] = []) {
-const attendance = attendances.find((attendance) => attendance.date === date);
-if (attendance) {
-    return 'text-green-500';
-}
-const permission = permissions.find((permission) => permission.date === date);
-if (permission) {
-    return 'text-yellow-500';
-}
-if (isWithinInterval(new Date(date), {
-    start: new Date(subscription.start_date),
-    end: new Date(subscription.end_date)
-}) && !attendance && !permission && isBefore(new Date(date), new Date())) {
-    return 'text-red-500';
-}
-return 'text-gray-700';
-}
+        if (isWithinInterval(new Date(date), {
+            start: new Date(subscription.start_date),
+            end: new Date(subscription.end_date)
+        })) {
+            return 'bg-blue-100';
+        }
+        return 'bg-gray-100';
+    }
+    function getBgColor(subscription: Subscription, date: string, attendances: Attendance[] = [], permissions: Permission[] = []) {
+        const attendance = attendances.find((attendance) => attendance.date === date);
+        if (attendance) {
+            return 'text-green-500';
+        }
+        const permission = permissions.find((permission) => permission.date === date);
+        if (permission) {
+            return 'text-yellow-500';
+        }
+        if (isWithinInterval(new Date(date), {
+            start: new Date(subscription.start_date),
+            end: new Date(subscription.end_date)
+        }) && !attendance && !permission && isBefore(new Date(date), new Date())) {
+            return 'text-red-500';
+        }
+        return 'text-gray-700';
+    }
+
 
 </script>
 
 <!-- susbcriber profile -->
 <div id="content" class="bg-white col-span-9 rounded-lg px-6 overflow-auto">
-    <div class="flex flex-row justify-between sticky top-0 bg-white">
-        <button
-            class="flex flex-row items-center justify-center bg-slate-400 rounded-full w-10 h-10"
-            on:click={() => {
-                dispatch('close')
-            }}
-        >
-            <i class="fas fa-times text-white"></i>
-        </button>
-        <div class="grid gap-2 grid-flow-col">
-            <i class="fas fa-edit text-xl text-green-500"></i>
-            <i class="fas fa-trash text-xl text-red-500"></i>
-        </div>
-    </div>
-    <div class="grid grid-cols-[1fr_1fr]">
+    <div class="grid lg:grid-cols-[1fr_1fr] grid-cols-1 ">
         <div>
             <h1 class="font-bold py-4 uppercase">Detalles de la cuenta</h1>
             <div class="flex flex-row space-x-4">
@@ -276,6 +261,7 @@ return 'text-gray-700';
                 justify-content: center;
                 align-items: center;
                 border-radius: 5px;
+                // background-color: #fff;
                 text-transform: capitalize;
                 // border: 1px solid rgb(226, 226, 226);
                 &.active{

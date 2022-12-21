@@ -13,7 +13,7 @@ api.users (
 );
 
 
-drop table if exists api.clients;
+drop table if exists api.clients cascade;
 create table if not exists
 api.clients (
   id uuid primary key default uuid_generate_v1(),
@@ -58,14 +58,10 @@ api.subscriptions (
   payment_amount numeric not null check (payment_amount >= 0 and payment_amount <= price),
   balance numeric not null check (balance >= 0),
   refered_subscription_id uuid references api.subscriptions(id),
+  user_id uuid references api.users(id),
   check (end_date >= start_date),
   check (created_at <= now())
 );
-alter table api.subscriptions add constraint subscriptions_payment_amount_check check (payment_amount >= 0 and payment_amount <= price)
-alter table api.subscriptions add constraint subscriptions_price_check check (balance >= 0)
--- drop check
-alter table api.subscriptions drop constraint subscriptions_payment_amount_check;
-alter table api.subscriptions drop constraint subscriptions_price_check;
 
 
 drop table if exists api.payments cascade;
@@ -75,6 +71,7 @@ api.payments (
     created_at timestamptz default now(),
     subscription_id uuid not null references api.subscriptions(id),
     amount numeric not null check (amount > 0),
+    user_id uuid references api.users(id),
     check (created_at <= now())
 );
 
@@ -89,6 +86,7 @@ api.attendances (
   date date not null,
   start_time time not null,
   end_time time,
+  user_id uuid references api.users(id),
   check (created_at <= now()),
   check (end_time >= start_time)
 );
@@ -99,6 +97,7 @@ create table if not exists api.permissions (
   id uuid primary key default uuid_generate_v1(),
   created_at timestamptz default now(),
   subscription_id uuid not null references api.subscriptions(id),
+  user_id uuid references api.users(id),
   date date not null,
   check (created_at <= now())
 );
