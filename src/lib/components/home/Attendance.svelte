@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { rpcService, subscriberService } from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
-	import FormLayer from '../forms/FormLayer.svelte';
-	import TextField from '../forms/inputs/TextField.svelte';
-	import SubscriberTable from '../tables/SubscriberTable.svelte';
 	import { format } from 'date-fns';
-	import ClientResult from '../profile/ClientResult.svelte';
 	import { onMount } from 'svelte';
+	import TextField from '../forms/inputs/TextField.svelte';
+	import ClientResult from '../profile/ClientResult.svelte';
 	export let title = 'Formulario';
 	export let type: 'attendance' | 'permission' = 'attendance';
 	let subscribers: Subscriber[] = [];
 	let keyword = '';
 	let start_date = format(new Date(), 'yyyy-MM-dd');
 	let permissionDays = 1;
-	let form: HTMLFormElement;
-	let selectedSubscriber: Subscriber;
+	let div: HTMLDivElement;
+	let selectedSubscriber: Subscriber | null = null;
 
 	async function submit() {
 		try {
@@ -94,19 +92,19 @@
 		}
 	}
 	function focus(){
-		const inputs = form?.querySelectorAll('input');
+		const inputs = div?.querySelectorAll('input');
 		if (inputs.length > 0) {
 			(inputs[0] as HTMLInputElement).focus();
 		}
 	}
 	onMount(() => {
-		// get form and focus on first input
+		// get div and focus on first input
 		focus()
 	});
 </script>
 
 
-<form class="bg-white" bind:this={form}>
+<div class="form" bind:this={div}>
 	<h1 class="text-2xl font-bold text-center">{title || 'Asistencia'}</h1>
 	<div class="flex flex-wrap sticky top-0 bg-white">
 		<TextField
@@ -134,21 +132,29 @@
 		</div>
 	</div>
 	{#if selectedSubscriber}
-	<ClientResult subscriber={selectedSubscriber} ></ClientResult>
+	<div id="content" class="bg-white col-span-9 rounded-lg px-6 overflow-auto">
+		<ClientResult subscriber={selectedSubscriber} ></ClientResult>
+	</div>
 	{/if}
-</form>
+</div>
 <svelte:window on:keydown={e => {
 	if (e.key === 'Enter') {
 		submit();
 	}
+	if(e.key === 'Escape'){
+		keyword = '';
+		selectedSubscriber = null;
+		focus()
+	}
 }} />
 <style>
-	form{
+	.form{
 		height: 100%;
 		margin: 1.5rem;
 		width: calc(100% - 3rem);
 		height: calc(100% - 3rem);
 		overflow: auto;
 		border-radius: 1rem;
+		@apply bg-white;
 	}
 </style>

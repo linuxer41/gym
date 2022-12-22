@@ -1,14 +1,69 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
-	// core components
-	import NotificationDropdown from '$lib/components/Dropdowns/NotificationDropdown.svelte';
-	import UserDropdown from '$lib/components/Dropdowns/UserDropdown.svelte';
+// core components
 	import { authToken, storeUser } from '$lib/core/store';
 
 	$: pathname = $page.url.pathname;
 	const logo = '/logos/endor-logo.jpg';
+
+	const routes = [
+		{
+			label: 'Gym',
+			icon: 'fa-dumbbell',
+			path: '/',
+			access_level: 1,
+			group: 'management'
+		},
+		{
+			label: 'Caja',
+			icon: 'fa-cash-register',
+			path: '/cash',
+			access_level: 1,
+			group: 'management'
+		},
+		{
+			label: 'Estadísticas',
+			icon: 'fa-tv',
+			path: '/statistics',
+			access_level: 2,
+			group: 'management'
+		},
+		{
+			label: 'Ajustes',
+			icon: 'fa-tools',
+			path: '/settings',
+			access_level: 2,
+			group: 'management'
+		},
+		{
+			label: 'Clientes',
+			icon: 'fa-users',
+			path: '/clients',
+			access_level: 1,
+			group: 'data'
+		},
+		{
+			label: 'Usuarios',
+			icon: 'fa-user',
+			path: '/users',
+			access_level: 2,
+			group: 'data'
+		}
+	]
+	let access_levels = [
+		{
+			id: 1,
+			name: 'Usuario',
+			key: 'api_user'
+		},
+		{
+			id: 2,
+			name: 'Administrador',
+			key: 'api_admin'
+		},
+
+	]
 </script>
 
 <nav
@@ -46,66 +101,24 @@
 			<!-- Navigation -->
 
 			<ul class="md:flex-col md:min-w-full flex flex-col list-none">
+				{#each routes.filter(
+					(route) => route.access_level <= (access_levels.find((level) => level.key === $storeUser?.role)?.id || 1)
+					&& route.group === 'management'
+				) as route, index}
 				<li class="items-center">
 					<a
-						href="/"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/'
+						href="{route.path}"
+						class="text-xs uppercase py-3 font-bold block {pathname === route.path
 							? 'text-lime-500 hover:text-lime-600'
 							: 'text-slate-700 hover:text-slate-500'}"
 					>
 						<i
-							class="fas fa-tv mr-2 text-sm {pathname === '/' ? 'opacity-75' : 'text-slate-300'}"
+							class="fas  {route.icon} mr-2 text-sm {pathname === route.path ? 'opacity-75' : 'text-slate-300'}"
 						/>
-						Gym
+						{route.label}
 					</a>
 				</li>
-				<!-- cash register -->
-				<li class="items-center">
-					<a
-						href="/cash-register"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/cash-register'
-							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
-					>
-						<i
-							class="fas fa-cash-register mr-2 text-sm {pathname === '/cash-register'
-								? 'opacity-75'
-								: 'text-slate-300'}"
-						/>
-						Caja
-					</a>
-				</li>
-				<li class="items-center">
-					<a
-						href="/statistics"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/statistics'
-							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
-					>
-						<i
-							class="fas fa-tv mr-2 text-sm {pathname === '/statistics'
-								? 'opacity-75'
-								: 'text-slate-300'}"
-						/>
-						Estadisticas
-					</a>
-				</li>
-
-				<li class="items-center">
-					<a
-						href="/settings"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/settings'
-							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
-					>
-						<i
-							class="fas fa-tools mr-2 text-sm {pathname === '/settings'
-								? 'opacity-75'
-								: 'text-slate-300'}"
-						/>
-						Ajustes
-					</a>
-				</li>
+				{/each}
 			</ul>
 
 			<!-- Divider -->
@@ -119,28 +132,24 @@
 			<!-- Navigation -->
 
 			<ul class="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+				{#each routes.filter(
+					(route) => route.access_level <= (access_levels.find((level) => level.key === $storeUser?.role)?.id || 1)
+					&& route.group === 'data'
+				) as route, index}
 				<li class="items-center">
 					<a
-						href="/clients"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/clients'
+						href="{route.path}"
+						class="text-xs uppercase py-3 font-bold block {pathname === route.path
 							? 'text-lime-500 hover:text-lime-600'
 							: 'text-slate-700 hover:text-slate-500'}"
 					>
-						<i class="fas fa-users text-slate-300 mr-2 text-sm" />
-						Clientes
+						<i
+							class="fas {route.icon} mr-2 text-sm {pathname === route.path ? 'opacity-75' : 'text-slate-300'}"
+						/>
+						{route.label}
 					</a>
 				</li>
-				<li class="items-center">
-					<a
-						href="/users"
-						class="text-xs uppercase py-3 font-bold block {pathname === '/users'
-							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
-					>
-						<i class="fas fa-user text-slate-300 mr-2 text-sm" />
-						Usuarios
-					</a>
-				</li>
+				{/each}
 			</ul>
 		</div>
 		<button>

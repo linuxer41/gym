@@ -19,12 +19,15 @@
 	let form: HTMLFormElement;
 	let hasSubscription = true;
 	let memberships: MembershipJoined[] = [];
-	let subscription: Subscription = {} as any;
+	let subscription: Subscription = {
+		start_date: format(new Date(), 'yyyy-MM-dd'),	
+	} as any;
 	let selectedMembership: MembershipJoined = {} as any;
 	let keyword = '';
 	let subscribers: Subscriber[] = [];
 	let referredSubscribers: Subscriber[] = [];
 	let checkedClientSubscription: Subscriber = {} as any;
+	let first_attendance = true;
 
 	function debounce(func: Function, wait: number, immediate: boolean) {
 		let timeout: any;
@@ -41,6 +44,23 @@
 			timeout = setTimeout(later, wait);
 			if (callNow) func.apply(context, args);
 		};
+	}
+
+	$:{
+		if((subscription.payment_amount || 0)>=0){
+			subscription.balance = Number(selectedMembership?.price) - Number(subscription.payment_amount);
+			// check balance negative
+			if(subscription.balance<0){
+				subscription.balance = 0;
+			}
+		}
+		if((subscription.price || 0)>=0){
+			subscription.balance = Number(subscription.price) - Number(subscription.payment_amount);
+			// check balance negative
+			if(subscription.balance<0){
+				subscription.balance = 0;
+			}
+		}
 	}
 
 	// debounce search
@@ -118,6 +138,7 @@
 				to_admit.payment = {
 					amount: selectedMembership?.price || 0
 				};
+				to_admit.first_attendance = first_attendance;
 				if (referredSubscribers.length) {
 					to_admit.referred_client_ids = referredSubscribers.map((s) => s.id);
 				}
@@ -233,7 +254,6 @@
 		<div class="flex flex-wrap">
 			<TextField label="CI" bind:value={data.dni} required on:input={onDniChange} />
 			<TextField label="Nombre" bind:value={data.name} required />
-
 			<TextField label="Teléfono" bind:value={data.phone} placeholder="" />
 			<TextField label="Email" bind:value={data.email} placeholder="" />
 			<TextField label="Dirección" bind:value={data.address} placeholder="" />
@@ -256,7 +276,7 @@
 				</span>
 			</div>
 		{:else}
-			<div class="mt-3 mb-6 flex place-content-between items-center">
+			<div class="mt-3 mb-1 flex place-content-between items-center">
 				<h6 class="text-slate-400 text-sm font-bold uppercase">Suscripción</h6>
 				<i
 					class="fas fa-toggle-{hasSubscription ? 'on' : 'off'} text-lime-{hasSubscription
@@ -267,6 +287,16 @@
 				/>
 			</div>
 			{#if hasSubscription}
+				<div class="mt-3 mb-6 flex place-content-between items-center">
+					<h6 class="text-slate-400 text-xs font-bold">Asistencia</h6>
+					<i
+						class="fas fa-toggle-{first_attendance ? 'on' : 'off'} text-lime-{first_attendance
+							? '500'
+							: '100'} text-2xl"
+						on:click={() => (first_attendance = !first_attendance)}
+						on:keyup={null}
+					/>
+				</div>
 				<div class="flex flex-wrap" transition:fly={{ y: 100, duration: 500 }}>
 					<div class="w-full lg:w-6/12 px-4">
 						<div class="relative w-full mb-3">
@@ -296,46 +326,11 @@
 							</select>
 						</div>
 					</div>
-					<div class="w-full lg:w-6/12 px-4">
-						<div class="relative w-full mb-3">
-							<label class="block uppercase text-slate-600 text-xs font-bold mb-2" for="grid-email">
-								Fecha de inicio
-							</label>
-							<input
-								id="grid-email"
-								type="date"
-								class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-								bind:value={subscription.start_date}
-							/>
-						</div>
-					</div>
-					<div class="w-full lg:w-6/12 px-4">
-						<div class="relative w-full mb-3">
-							<label class="block uppercase text-slate-600 text-xs font-bold mb-2" for="grid-email">
-								Precio
-							</label>
-							<input
-								id="grid-email"
-								type="number"
-								class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-								bind:value={subscription.price}
-							/>
-						</div>
-					</div>
 
-					<div class="w-full lg:w-6/12 px-4">
-						<div class="relative w-full mb-3">
-							<label class="block uppercase text-slate-600 text-xs font-bold mb-2" for="grid-email">
-								Monto pagado
-							</label>
-							<input
-								id="grid-email"
-								type="number"
-								class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-								bind:value={subscription.payment_amount}
-							/>
-						</div>
-					</div>
+					<TextField label="Fecha de inicio" type="date" bind:value={subscription.start_date} placeholder="" />
+
+					<TextField label="Precio" type="number" bind:value={subscription.price} placeholder="" />
+					<TextField label="Monto pagado" type="number" bind:value={subscription.payment_amount} placeholder="" />
 					{#if selectedMembership}
 						<!-- membership details card -->
 						<div class="w-full lg:w-6/12 px-4">
@@ -344,11 +339,17 @@
 									class="block uppercase text-slate-600 text-xs font-bold mb-2"
 									for="grid-email"
 								>
-									Detalles
+									Detalles de suscripción
 								</label>
 								<div class="bg-white shadow rounded-lg overflow-hidden">
 									<div class="px-4 py-5 sm:p-6">
 										<dl>
+											<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+												<dt class="text-sm font-medium text-slate-500">Deuda</dt>
+												<dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">
+													Bs {subscription.balance || 0}
+												</dd>
+											</div>
 											<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 												<dt class="text-sm font-medium text-slate-500">Plan</dt>
 												<dd class="mt-1 text-sm text-slate-900 sm:mt-0 sm:col-span-2">

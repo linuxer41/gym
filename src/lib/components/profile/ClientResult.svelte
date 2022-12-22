@@ -1,17 +1,8 @@
 <script lang="ts">
-	import { clientService } from "$lib/core/services";
-	import { getDaysInMonth, getWeek, getWeeksInMonth, isBefore, isWithinInterval } from "date-fns";
-	import { createEventDispatcher } from "svelte";
-	import { current_component, onMount } from "svelte/internal";
-
+	import { getDaysInMonth, getWeek, isBefore, isWithinInterval } from "date-fns";
+	
 	export let subscriber: Subscriber;
-    const dispatch = createEventDispatcher();
-    // create list of dates for 3 months, past, current and next grouped by month using date-fns
-    // example: [
-     // {month: '2021-08', days: [
-    //  {day: 1, date: '2021-08-01', week: 1, name: 'Lun-01'},
-    // ]}
-    // ]
+
     
     function getDates() {
         const dates: any[] = [];
@@ -82,7 +73,7 @@
 </script>
 
 <!-- susbcriber profile -->
-<div id="content" class="bg-white col-span-9 rounded-lg px-6 overflow-auto">
+
     <div class="grid lg:grid-cols-[1fr_1fr] grid-cols-1 ">
         <div>
             <h1 class="font-bold py-4 uppercase">Detalles de la cuenta</h1>
@@ -179,7 +170,7 @@
         {@const active_subscription = subscriber.active_subscription}
         <div class="calendar">
             {#each getDates() as month}
-            {@const monthAtendandes = subscriber.subscriptions.flatMap(subscription => subscription.attendances).filter(attendance => attendance.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
+            {@const monthAttendances = subscriber.subscriptions.flatMap(subscription => subscription.attendances).filter(attendance => attendance.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
             {@const monthPermissions = subscriber.subscriptions.flatMap(subscription => subscription.permissions).filter(permission => permission.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
                 <div>
                     <h6 class="text-slate-400 text-xs mt-3 mb-2 font-bold">
@@ -189,8 +180,8 @@
                     {#each month.days as day}
                     
                         <div class="day {getBgColorRange(active_subscription, day.date)}">
-                            <h1 class="font-bold text-sm  {getBgColor(active_subscription, day.date, monthAtendandes, monthPermissions)} {
-                                day.date === new Date().toISOString().split('T')[0] ? 'bg-blue-300 rounded-full' : ''
+                            <h1 class="font-bold text-sm  {getBgColor(active_subscription, day.date, monthAttendances, monthPermissions)} {
+                                day.date === new Date().toISOString().split('T')[0] ? 'border border-blue-500 rounded-lg' : ''
                             }">
                                 {day.day}
                             </h1>
@@ -239,7 +230,6 @@
             </table>
         </div>
     </div>
-</div>
 
 <style lang="scss">
     .calendar{

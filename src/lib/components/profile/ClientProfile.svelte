@@ -1,88 +1,23 @@
 <script lang="ts">
-	import { getDaysInMonth, getWeek, getWeeksInMonth, isBefore, isWithinInterval } from "date-fns";
+	import { subscriberService } from "$lib/core/services";
 	import { createEventDispatcher } from "svelte";
-	import { current_component } from "svelte/internal";
+	import ClientForm from "../forms/ClientForm.svelte";
+	import ClientResult from "./ClientResult.svelte";
 
 	export let subscriber: Subscriber;
     const dispatch = createEventDispatcher();
-    // create list of dates for 3 months, past, current and next grouped by month using date-fns
-    // example: [
-     // {month: '2021-08', days: [
-    //  {day: 1, date: '2021-08-01', week: 1, name: 'Lun-01'},
-    // ]}
-    // ]
+    let edit = false;
     
-    function getDates() {
-        const dates: any[] = [];
-        const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
-        // const months = [currentMonth - 1, currentMonth, currentMonth + 1];
-        const months = [currentMonth];
-        months.forEach((month) => {
-            const monthDate = new Date(currentYear, month);
-            const monthName = monthDate.toLocaleString('es-BO', { month: 'long' });
-            const monthNumber = monthDate.getMonth();
-            const monthYear = monthDate.getFullYear();
-            const monthKey = `${monthYear}-${monthNumber + 1}`;
-            const days = [];
-            const daysInMonth = getDaysInMonth(monthDate);
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayDate = new Date(monthYear, monthNumber, i);
-                const dayName = dayDate.toLocaleString('es-BO', { weekday: 'short' });
-                const dayNumber = dayDate.getDate();
-                const dayKey = `${monthKey}-${dayNumber}`;
-                const dayWeek = getWeek(dayDate);
-                days.push({
-                    day: dayNumber,
-                    date: dayKey,
-                    week: dayWeek,
-                    name: `${dayName}`,
-                });
-            }
-            dates.push({
-                year: monthYear,
-                name: monthName,
-                days,
-            });
-
-        });
-        return dates;
+    async function load(){
+        setTimeout(async() => {
+            if(subscriber?.id) subscriber = await subscriberService.get(subscriber.id);
+        }, 300);
     }
-    console.log(getDates());
 
-
-    function getBgColorRange(subscription: Subscription, date: string) {
-
-if (isWithinInterval(new Date(date), {
-    start: new Date(subscription.start_date),
-    end: new Date(subscription.end_date)
-})) {
-    return 'bg-blue-100';
-}
-return 'bg-gray-100';
-}
-function getBgColor(subscription: Subscription, date: string, attendances: Attendance[] = [], permissions: Permission[] = []) {
-const attendance = attendances.find((attendance) => attendance.date === date);
-if (attendance) {
-    return 'text-green-500';
-}
-const permission = permissions.find((permission) => permission.date === date);
-if (permission) {
-    return 'text-yellow-500';
-}
-if (isWithinInterval(new Date(date), {
-    start: new Date(subscription.start_date),
-    end: new Date(subscription.end_date)
-}) && !attendance && !permission && isBefore(new Date(date), new Date())) {
-    return 'text-red-500';
-}
-return 'text-gray-700';
-}
 
 </script>
 
-<!-- susbcriber profile -->
+<!-- subscriber profile -->
 <div id="content" class="bg-white col-span-9 rounded-lg px-6 overflow-auto">
     <div class="flex flex-row justify-between sticky top-0 bg-white">
         <button
@@ -94,167 +29,17 @@ return 'text-gray-700';
             <i class="fas fa-times text-white"></i>
         </button>
         <div class="grid gap-2 grid-flow-col">
-            <i class="fas fa-edit text-xl text-green-500"></i>
-            <i class="fas fa-trash text-xl text-red-500"></i>
+            <button on:click={()=>edit=true}>
+                <i class="fas fa-edit text-xl text-green-500" ></i>
+            </button>
+            <!-- <i class="fas fa-trash text-xl text-red-500"></i> -->
         </div>
     </div>
-    <div class="grid grid-cols-[1fr_1fr]">
-        <div>
-            <h1 class="font-bold py-4 uppercase">Detalles de la cuenta</h1>
-            <div class="flex flex-row space-x-4">
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Nombre
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.name || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        CI
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.dni || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Email
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.email || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Teléfono
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.phone || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Deuda
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        Bs {subscriber.balance || 0}
-                    </h1>
-                </div>
-
-            </div>
-            {#if subscriber.active_subscription}
-            {@const active_subscription = subscriber.active_subscription}
-            <h1 class="font-bold py-4 uppercase">Suscripción actual</h1>
-            <div class="flex flex-row space-x-4">
-                
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Fecha de inicio
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.start_date || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Fecha de fin
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.end_date || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Dias restantes
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.left_days || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Tipo
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        { (active_subscription.membership.name + ' - ' + active_subscription.plan.name) || 'N/A'}
-                    </h1>
-                </div>
-            </div>
-            {:else}
-            <div class="flex flex-col">
-                <h6 class="text-red-400 text-xs mt-3 mb-6 font-bold">
-                    Sin suscripción activa
-                </h6>
-            </div>
-            {/if}
-        </div>
-        {#if subscriber.active_subscription}
-        {@const active_subscription = subscriber.active_subscription}
-        <div class="calendar">
-            {#each getDates() as month}
-            {@const monthAtendandes = subscriber.subscriptions.flatMap(subscription => subscription.attendances).filter(attendance => attendance.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
-            {@const monthPermissions = subscriber.subscriptions.flatMap(subscription => subscription.permissions).filter(permission => permission.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
-                <div>
-                    <h6 class="text-slate-400 text-xs mt-3 mb-2 font-bold">
-                        {month.year} - {month.name}
-                    </h6>
-                    <div class="month">
-                    {#each month.days as day}
-                    
-                        <div class="day {getBgColorRange(active_subscription, day.date)}">
-                            <h1 class="font-bold text-sm  {getBgColor(active_subscription, day.date, monthAtendandes, monthPermissions)} {
-                                day.date === new Date().toISOString().split('T')[0] ? 'bg-blue-300 rounded-full' : ''
-                            }">
-                                {day.day}
-                            </h1>
-                            <h1 class="text-sm text-gray-600">
-                                {day.name}
-                            </h1>
-                        </div>
-                    {/each}
-                    </div>
-                </div>
-            {/each}
-        </div>
-        {:else}
-        <div>
-        </div>
-        {/if}
-    </div>
-    <div id="last-incomes">
-        <h1 class="font-bold py-4 uppercase">Historial de suscripciones</h1>
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha de inicio</th>
-                        <th>Fecha de fin</th>
-                        <th>Tipo</th>
-                        <th>Asistencias</th>
-                        <th>Permisos</th>
-                        <th>Monto pagado</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each (subscriber.subscriptions || []) as subscription}
-                    <tr>
-                        <td>{subscription.start_date}</td>
-                        <td>{subscription.end_date}</td>
-                        <td>{subscription.membership.name + ' - ' + subscription.plan.name}</td>
-                        <td>{subscription.attendances_count}</td>
-                        <td>{subscription.permissions_count}</td>
-                        <td>{subscription.total_paid}</td>
-                        <td>{subscription.expired? 'Expirado' : !subscription.is_active? 'Desactivado': 'Activo' }</td>
-                    </tr>
-                    {/each}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <ClientResult {subscriber} />
 </div>
+{#if edit}
+    <ClientForm isEdit data={subscriber} on:close={()=>edit=false} on:create={async(e)=>{edit=false;subscriber = {...e.detail, ...subscriber}}} />
+{/if}
 
 <style lang="scss">
     .calendar{

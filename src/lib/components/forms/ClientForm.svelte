@@ -17,25 +17,26 @@
 			if (!form.checkValidity()) {
 				throw new Error('Formulario invalido o incompleto');
 			}
-			const check = await clientService.get(data.email || '', 'email');
+			const check = await clientService.get(data.dni || '', 'dni');
 			if (!!check) {
 				if (isEdit) {
 					if (data.id !== check.id) {
-						throw new Error('Ya existe un usuario con el mismo email: ' + data.email);
+						throw new Error('Ya existe un usuario con el mismo dni: ' + data.dni);
 					}
 				} else {
-					throw new Error('Ya existe un usuario con el mismo email: ' + data.email);
+					throw new Error('Ya existe un usuario con el mismo dni: ' + data.dni);
 				}
 			}
-			// const res = await rpcService.register(data)
-			// if(!res.ok){
-			//     throw new Error('Error al registrar usuario')
-			// }
-			// const client = await res.json()
-
-			data = await clientService.create(data);
+			const _data = {
+				name: data.name,
+				dni: data.dni,
+				phone: data.phone,
+				email: data.email,
+				address: data.address
+			}
+			data = (isEdit && data?.id)?await clientService.update(data.id, _data):await clientService.create(_data);
 			snackBar.show({
-				message: 'Usuario registrado con exito',
+				message: 'Cliente actualizado con éxito',
 				type: 'success'
 			});
 			dispatch('create', data);
@@ -62,8 +63,8 @@
 			<TextField label="Nombre" bind:value={data.name} required />
 			<TextField label="Email" bind:value={data.email} placeholder="" type="email" required />
 			<TextField label="CI" bind:value={data.dni} />
-			<TextField label="Telefono" bind:value={data.phone} placeholder="" type="tel" />
-			<TextField label="Direccion" bind:value={data.address} placeholder="" />
+			<TextField label="Teléfono" bind:value={data.phone} placeholder="" type="tel" />
+			<TextField label="Dirección" bind:value={data.address} placeholder="" />
 		</div>
 	</form>
 </FormLayer>
