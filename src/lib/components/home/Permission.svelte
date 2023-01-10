@@ -113,7 +113,7 @@
 			{/if}
 		</div>
 		{#if selectedSubscriber}
-		<ClientProfile subscriber={selectedSubscriber} ></ClientProfile>
+		<ClientProfile subscriber={selectedSubscriber} fontLarge ></ClientProfile>
 		{/if}
 	</form>
 </FormLayer>

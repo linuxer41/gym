@@ -4,29 +4,25 @@
 	import { onMount } from 'svelte';
 
 	const backgrounds = [
-		//     static\wallpers\john-arano-h4i9G-de7Po-unsplash.jpg
-		// static\wallpers\ryan-de-hamer-WIPIAJW2-P8-unsplash.jpg
-		// static\wallpers\victor-freitas-hOuJYX2K5DA-unsplash.jpg
-		// static\wallpers\victor-freitas-vjkM-0m34KU-unsplash.jpg
 		'/wallpers/john-arano-h4i9G-de7Po-unsplash.jpg',
 		'/wallpers/ryan-de-hamer-WIPIAJW2-P8-unsplash.jpg',
 		'/wallpers/victor-freitas-hOuJYX2K5DA-unsplash.jpg',
 		'/wallpers/victor-freitas-vjkM-0m34KU-unsplash.jpg'
 	];
 	let backgound = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-	onMount(() => {
-		// change background image every 10 seconds
-		setInterval(() => {
-			backgound = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-			const el = document.getElementById('main-content');
-			if (el) el.style.backgroundImage = `url(${backgound})`;
-		}, 10000);
-	});
+	// onMount(() => {
+	// 	// change background image every 10 seconds
+	// 	setInterval(() => {
+	// 		backgound = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+	// 		const el = document.getElementById('main-content');
+	// 		if (el) el.style.backgroundImage = `url(${backgound})`;
+	// 	}, 10000);
+	// });
 </script>
 
 <div class="grid w-full h-screen grid-cols-[250px_1fr] overflow-hidden">
 	<Sidebar />
-	<div class="grid bg-image bg-cover w-full h-full overflow-hidden" id="main-content">
+	<div class="grid bg-gray-700 w-full h-full overflow-hidden" id="main-content">
 		<!-- <AdminNavbar /> -->
 		<slot />
 	</div>

@@ -6,7 +6,7 @@
 		subscriberService
 	} from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
-	import { addDays, format } from 'date-fns';
+	import { addDays, format, parseISO } from 'date-fns';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import FormLayer from '../forms/FormLayer.svelte';
@@ -123,7 +123,8 @@
 			}
 
 			if (selectedMembership && hasSubscription) {
-				const now = new Date();
+				const now = parseISO(subscription.start_date) || new Date();
+				console.debug('now', now);
 				const end =
 					selectedMembership.duration === 1
 						? addDays(now, selectedMembership.duration - 1)
@@ -305,7 +306,6 @@
 							</label>
 							<select
 								id="grid-prone"
-								type="tel"
 								class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 								bind:value={subscription.membership_id}
 								on:change={(e) => {

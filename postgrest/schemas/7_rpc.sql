@@ -14,14 +14,20 @@ BEGIN
     end if;
     client_record := functions.get_client(new_attendance.client_id);
     subscription_record := functions.get_client_subscription(client_record.id);
-
-    if not functions.check_attendance_permission(subscription_record.id, current_date) then
-        raise exception using message = 'No tiene permiso para asistir';
+    if subscription_record.id is null then
+        raise exception using message = 'El cliente no tiene una suscripción activa';
     end if;
-    -- create attendance
-    insert into api.attendances (subscription_id, date, start_time, user_id)
-    values (subscription_record.id, current_date, current_time,  (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid)
-    returning * into attendance_record;
+
+    -- if not functions.check_attendance_permission(subscription_record.id, current_date) then
+    --     raise exception using message = 'No tiene permiso para asistir';
+    -- end if;
+    attendance_record := functions.get_date_subscription_attendance(subscription_record.id, current_date);
+    if attendance_record.id is null then
+        -- create attendance
+        insert into api.attendances (subscription_id, date, start_time, user_id)
+        values (subscription_record.id, current_date, current_time,  (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid)
+        returning * into attendance_record;
+    end if;
     -- return client_id
     return json_build_object(
         'client', COALESCE(to_json(client_record), '{}'),

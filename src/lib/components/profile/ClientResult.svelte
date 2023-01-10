@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { getDaysInMonth, getWeek, isBefore, isWithinInterval } from "date-fns";
+	import { getDaysInMonth, getWeek, isBefore, isWithinInterval, parseISO } from "date-fns";
 	
 	export let subscriber: Subscriber;
+    export let fontLarge = false;
 
     
     function getDates() {
@@ -16,14 +17,14 @@
             const monthName = monthDate.toLocaleString('es-BO', { month: 'long' });
             const monthNumber = monthDate.getMonth();
             const monthYear = monthDate.getFullYear();
-            const monthKey = `${monthYear}-${monthNumber + 1}`;
+            const monthKey = `${monthYear}-${String(monthNumber + 1).padStart(2, '0')}`;
             const days = [];
             const daysInMonth = getDaysInMonth(monthDate);
             for (let i = 1; i <= daysInMonth; i++) {
                 const dayDate = new Date(monthYear, monthNumber, i);
                 const dayName = dayDate.toLocaleString('es-BO', { weekday: 'short' });
                 const dayNumber = dayDate.getDate();
-                const dayKey = `${monthKey}-${dayNumber}`;
+                const dayKey = `${monthKey}-${String(dayNumber).padStart(2, '0')}`;
                 const dayWeek = getWeek(dayDate);
                 days.push({
                     day: dayNumber,
@@ -39,6 +40,7 @@
             });
 
         });
+        console.log({dates});
         return dates;
     }
     function getBgColorRange(subscription: Subscription, date: string) {
@@ -47,13 +49,14 @@
             start: new Date(subscription.start_date),
             end: new Date(subscription.end_date)
         })) {
-            return 'bg-blue-100';
+            return 'bg-gray-100';
         }
-        return 'bg-gray-100';
+        return 'bg-gray-400';
     }
     function getBgColor(subscription: Subscription, date: string, attendances: Attendance[] = [], permissions: Permission[] = []) {
         const attendance = attendances.find((attendance) => attendance.date === date);
         if (attendance) {
+            console.log({'atte_dat': attendance.date, date, 'equal': attendance.date === date});
             return 'text-green-500';
         }
         const permission = permissions.find((permission) => permission.date === date);
@@ -70,100 +73,94 @@
     }
 
 
+    const userShowProps = [
+        {
+            label: 'Nombre',
+            value: subscriber.name || 'N/A',
+        },
+        {
+            label: 'CI',
+            value: subscriber.dni || 'N/A',
+        },
+        {
+            label: 'Email',
+            value: subscriber.email || 'N/A',
+        },
+        {
+            label: 'Teléfono',
+            value: subscriber.phone || 'N/A',
+        },
+        {
+            label: 'Deuda',
+            value: `Bs ${subscriber.balance || 0}`,
+        }
+    ]
+
+    const infoColors = {
+        'text-green-500': 'Asistió',
+        'text-yellow-500': 'Permiso',
+        'text-red-500': 'Falta',
+        'text-gray-700': 'Habilitado',
+    }
+    const getSubscriptionInfo = (active_subscription: ClientSubscription) =>  [
+        {
+            label: 'Fecha de inicio',
+            value: active_subscription.start_date || 'N/A',
+        },
+        {
+            label: 'Fecha de fin',
+            value: active_subscription.end_date || 'N/A',
+        },
+        {
+            label: 'Dias restantes',
+            value: active_subscription.left_days || 'N/A',
+        },
+        {
+            label: 'Tipo',
+            value: (active_subscription.membership.name + ' - ' + active_subscription.plan.name) || 'N/A',
+        }
+    ]
+
 </script>
 
-<!-- susbcriber profile -->
+<!-- subscriber profile -->
 
-    <div class="grid lg:grid-cols-[1fr_1fr] grid-cols-1 ">
-        <div>
-            <h1 class="font-bold py-4 uppercase">Detalles de la cuenta</h1>
-            <div class="flex flex-row space-x-4">
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Nombre
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.name || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        CI
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.dni || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Email
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.email || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Teléfono
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {subscriber.phone || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb-1 font-bold">
-                        Deuda
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        Bs {subscriber.balance || 0}
-                    </h1>
-                </div>
+    <div class="grid lg:grid-cols-[1fr_1fr] grid-cols-1 gap-1 ">
+        <div class="border border-gray-200 rounded-lg p-4">
+            <h1 class="font-bold uppercase text-gray-700 text-center underline">Detalles de la cuenta</h1>
+            <div class="grid grid-cols-2 gap-1">
+                {#each userShowProps as prop}
+                    <div class="flex flex-col">
+                        <h6 class="text-slate {fontLarge?'text-lg':'text-xs'} text-gray-100 font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                            {prop.label}
+                        </h6>
+                        <h1 class="font-bold {fontLarge?'text-xl':'text-xs'} whitespace-nowrap overflow-hidden text-ellipsis">
+                            {prop.value}
+                        </h1>
+                    </div>
+                {/each}
 
             </div>
+            <h1 class="font-bold uppercase text-gray-700 text-center underline">Suscripción actual</h1>
             {#if subscriber.active_subscription}
             {@const active_subscription = subscriber.active_subscription}
-            <h1 class="font-bold py-4 uppercase">Suscripción actual</h1>
-            <div class="flex flex-row space-x-4">
+            <div class="grid grid-cols-2 gap-1">
                 
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Fecha de inicio
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.start_date || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Fecha de fin
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.end_date || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Dias restantes
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        {active_subscription.left_days || 'N/A'}
-                    </h1>
-                </div>
-                <div class="flex flex-col">
-                    <h6 class="text-slate-400 text-xs mt-3 mb font-bold">
-                        Tipo
-                    </h6>
-                    <h1 class="font-bold text-sm">
-                        { (active_subscription.membership.name + ' - ' + active_subscription.plan.name) || 'N/A'}
-                    </h1>
-                </div>
+                {#each getSubscriptionInfo(active_subscription) as prop}
+                    <div class="flex flex-col">
+                        <h6 class="text-slate {fontLarge?'text-lg':'text-xs'} text-gray-100 font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                            {prop.label}
+                        </h6>
+                        <h1 class="font-bold {fontLarge?'text-xl':'text-xs'} whitespace-nowrap overflow-hidden text-ellipsis">
+                            {prop.value}
+                        </h1>
+                    </div>
+                {/each}
             </div>
             {:else}
-            <div class="flex flex-col">
-                <h6 class="text-red-400 text-xs mt-3 mb-6 font-bold">
-                    Sin suscripción activa
+                <h6 class="text-red-500 text-lg mt-3 mb-6 font-bold ">
+                    Sin suscripción activa !!!
                 </h6>
-            </div>
             {/if}
         </div>
         {#if subscriber.active_subscription}
@@ -173,8 +170,8 @@
             {@const monthAttendances = subscriber.subscriptions.flatMap(subscription => subscription.attendances).filter(attendance => attendance.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
             {@const monthPermissions = subscriber.subscriptions.flatMap(subscription => subscription.permissions).filter(permission => permission.date.startsWith(month.year + '-' + (month.days[0].date.split('-')[1])))}
                 <div>
-                    <h6 class="text-slate-400 text-xs mt-3 mb-2 font-bold">
-                        {month.year} - {month.name}
+                    <h6 class="text-slate-100 text-xl mt-3 mb-2 font-bold">
+                        Asistencias: {month.year} - {month.name}
                     </h6>
                     <div class="month">
                     {#each month.days as day}
@@ -191,6 +188,19 @@
                         </div>
                     {/each}
                     </div>
+                    <!-- info colors -->
+                    <div class="flex flex-row gap-2 mt-2">
+                        {#each Object.entries(infoColors) as [color, text]}
+                            <div class="grid gap-1">
+                                <div class="w-4 h-4 rounded-lg {color}">
+                                 <i class="fas fa-check"></i>
+                                </div>
+                                <h1 class="text-sm text-gray-600">
+                                    {text}
+                                </h1>
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             {/each}
         </div>
@@ -199,10 +209,10 @@
         </div>
         {/if}
     </div>
-    <div id="last-incomes">
+    <div id="last-incomes dark_bg">
         <h1 class="font-bold py-4 uppercase">Historial de suscripciones</h1>
         <div>
-            <table>
+            <table class="dark_bg">
                 <thead>
                     <tr>
                         <th>Fecha de inicio</th>
@@ -276,7 +286,7 @@
                     font-size: 0.75rem;
                     font-weight: 600;
                     text-transform: uppercase;
-                    color: #4a5568;
+                    color: white;
                     letter-spacing: 0.05em;
                 }
             }
@@ -289,7 +299,7 @@
                     text-align: left;
                     font-size: 0.75rem;
                     font-weight: 400;
-                    color: #4a5568;
+                    color: white;
                     letter-spacing: 0.05em;
                 }
             }

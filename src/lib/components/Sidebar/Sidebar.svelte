@@ -67,7 +67,7 @@
 </script>
 
 <nav
-	class="shadow-xl bg-white flex flex-wrap items-center justify-between relative w-full z-10 py-4 px-6"
+	class="shadow-xl dark_bg flex flex-wrap items-center justify-between relative w-full z-10 py-4 px-6"
 >
 	<div
 		class="flex-col items-stretch min-h-full flex-nowrap px-0 flex  justify-between w-full mx-auto"
@@ -78,15 +78,15 @@
 		>
 			<!-- Brand -->
 			<a
-				class="block text-left md:pb-2 text-slate-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+				class="block text-left text-slate-100 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold grid place-content-center "
 				href="/"
 			>
-				<img class="w-40" src={logo} alt="" />
+				<img class="w-40 object-fit rounded-[999px]" src={logo} alt="" />
 			</a>
 			<!-- Divider -->
 			<hr class="my-4 md:min-w-full" />
 			<!-- user name -->
-			<p class="text-center text-slate-600 text-sm font-bold">
+			<p class="text-center text-slate-100 text-sm font-bold">
 				{$storeUser?.name}
 			</p>
 
@@ -94,7 +94,7 @@
 			<hr class="my-4 md:min-w-full" />
 			<!-- Heading -->
 			<h6
-				class="md:min-w-full text-slate-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline"
+				class="md:min-w-full text-slate-100 text-xs uppercase font-bold block pt-1 pb-4 no-underline"
 			>
 				Administración
 			</h6>
@@ -110,7 +110,7 @@
 						href="{route.path}"
 						class="text-xs uppercase py-3 font-bold block {pathname === route.path
 							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
+							: 'text-slate-200 hover:text-slate-100'}"
 					>
 						<i
 							class="fas  {route.icon} mr-2 text-sm {pathname === route.path ? 'opacity-75' : 'text-slate-300'}"
@@ -125,7 +125,7 @@
 			<hr class="my-4 md:min-w-full" />
 			<!-- Heading -->
 			<h6
-				class="md:min-w-full text-slate-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline"
+				class="md:min-w-full text-slate-100 text-xs uppercase font-bold block pt-1 pb-4 no-underline"
 			>
 				Datos
 			</h6>
@@ -141,7 +141,7 @@
 						href="{route.path}"
 						class="text-xs uppercase py-3 font-bold block {pathname === route.path
 							? 'text-lime-500 hover:text-lime-600'
-							: 'text-slate-700 hover:text-slate-500'}"
+							: 'text-slate-200 hover:text-slate-100'}"
 					>
 						<i
 							class="fas {route.icon} mr-2 text-sm {pathname === route.path ? 'opacity-75' : 'text-slate-300'}"

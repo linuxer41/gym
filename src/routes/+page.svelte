@@ -57,12 +57,12 @@
 </script>
 
 <div class="grid grid-rows-[auto_1fr] w-full h-screen place overflow-hidden">
-	<div class="p-6 grid gap-6 custom-grid-place" bind:clientHeight={panelHeight}>
+	<div class="p-2 grid gap-2 custom-grid-place" bind:clientHeight={panelHeight}>
 		<!-- create a 3 cards -->
 		{#each cards as card}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
-				class="bg-lime-500 text-white shadow-lg rounded-lg p-6 grid grid-cols-[auto_1fr] gap-4 cursor-pointer"
+				class="light_bg text-white shadow-lg rounded-lg p-6 grid grid-cols-[auto_1fr] gap-4 cursor-pointer"
 				on:click={() => targetCard !== card && (targetCard = card)}
 			>
 				<div class="grid grid-col-1 content-center items-center">

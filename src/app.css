@@ -17,3 +17,10 @@ body {
 	--default-color: #607d8b;
 	--spacing-normal: 0.5rem;
 }
+
+.light_bg {
+	background-color: #01e09e;
+}
+.dark_bg {
+	background-color: #000000;
+}
