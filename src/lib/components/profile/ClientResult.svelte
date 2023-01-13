@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { getDaysInMonth, getWeek, isBefore, isWithinInterval, parseISO } from "date-fns";
+	import DebtModal from "../modals/DebtModal.svelte";
 	
 	export let subscriber: Subscriber;
     export let fontLarge = false;
+    let showDebtModal = false;
 
     
     function getDates() {
@@ -73,7 +75,7 @@
     }
 
 
-    const userShowProps = [
+    const getUserShowProps = (subscriber: Subscriber)=> [
         {
             label: 'Nombre',
             value: subscriber.name || 'N/A',
@@ -129,7 +131,7 @@
         <div class="border border-gray-200 rounded-lg p-4">
             <h1 class="font-bold uppercase text-gray-700 text-center underline">Detalles de la cuenta</h1>
             <div class="grid grid-cols-2 gap-1">
-                {#each userShowProps as prop}
+                {#each getUserShowProps(subscriber) as prop}
                     <div class="flex flex-col">
                         <h6 class="text-slate {fontLarge?'text-lg':'text-xs'} text-gray-100 font-bold whitespace-nowrap overflow-hidden text-ellipsis">
                             {prop.label}
@@ -139,6 +141,16 @@
                         </h1>
                     </div>
                 {/each}
+                <!-- Boton de pagar deuda -->
+                {#if subscriber.balance > 0}
+                    <div class="col-span-2">
+                        <button class="bg-green-500 text-white font-bold py-2 px-4 rounded w-full" on:click={() => {
+                            showDebtModal = true
+                        }}>
+                            Pagar deuda
+                        </button>
+                    </div>
+                {/if}
 
             </div>
             <h1 class="font-bold uppercase text-gray-700 text-center underline">Suscripción actual</h1>
@@ -240,7 +252,15 @@
             </table>
         </div>
     </div>
-
+{#if showDebtModal}
+<DebtModal
+    data={subscriber}
+    on:close={() => showDebtModal = false}
+    on:success={() => showDebtModal = false}
+    on:payment
+    title="Deudas del cliente"
+/>
+{/if}
 <style lang="scss">
     .calendar{
         display: grid;

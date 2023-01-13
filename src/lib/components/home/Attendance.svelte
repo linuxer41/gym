@@ -91,6 +91,16 @@
 			});
 		}
 	}
+	// reload subscribers whe payment
+	function reloadSubscribers() {
+		if(selectedSubscriber?.id){
+			subscriberService.get(selectedSubscriber.id).then((subscriber) => {
+				selectedSubscriber = subscriber;
+			});
+		}
+		// console.debug('reload subscribers');
+		// searchSubscriber();
+	}
 	function focus(){
 		const inputs = div?.querySelectorAll('input');
 		if (inputs.length > 0) {
@@ -146,7 +156,7 @@
 	</div>
 	{#if selectedSubscriber}
 	<div id="content" class="col-span-9 m-3 p-3 overflow-auto light_bg">
-		<ClientResult subscriber={selectedSubscriber} fontLarge ></ClientResult>
+		<ClientResult subscriber={selectedSubscriber} fontLarge on:payment={reloadSubscribers} ></ClientResult>
 	</div>
 	{/if}
 </div>

@@ -131,13 +131,13 @@
 						: addDays(now, selectedMembership.duration);
 				subscription.start_date = format(now, 'yyyy-MM-dd');
 				subscription.end_date = format(end, 'yyyy-MM-dd');
-				subscription.payment_amount = selectedMembership?.price;
+				// subscription.payment_amount = selectedMembership?.price;
 				subscription.price = selectedMembership?.price;
-				subscription.balance = 0;
+				// subscription.balance = 0;
 				subscription.membership_id = selectedMembership?.id;
 				to_admit.subscription = subscription;
 				to_admit.payment = {
-					amount: selectedMembership?.price || 0
+					amount: subscription.payment_amount || 0
 				};
 				to_admit.first_attendance = first_attendance;
 				if (referredSubscribers.length) {

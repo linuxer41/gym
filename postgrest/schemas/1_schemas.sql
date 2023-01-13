@@ -87,8 +87,13 @@ api.attendances (
   date date not null,
   start_time time not null,
   end_time time,
+  count integer not null default 1,
   check (created_at <= now())
 );
+
+-- add count column to attendances
+alter table api.attendances add column if not exists count integer not null default 1;
+
 
 -- permissions of attendances client
 drop table if exists api.permissions cascade;

@@ -59,6 +59,14 @@ class RpcService {
 			body: JSON.stringify(data)
 		});
 	}
+	payment(data: { subscription_id: string; amount: number; }): Promise<Response> {
+		return this.fetch(`new_payment`, {
+			method: 'POST',
+			body: JSON.stringify({
+				payment: data
+			})
+		});
+	}
 }
 
 export const rpcService = new RpcService();

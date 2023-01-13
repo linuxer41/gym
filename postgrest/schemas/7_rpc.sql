@@ -7,7 +7,9 @@ declare
     client_record api.clients;
     subscription_record api.subscriptions;
     attendance_record api.attendances;
+    current_user_id uuid;
 BEGIN
+    current_user_id := (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
     -- raise null
     if new_attendance.client_id is null then
         raise null_value_not_allowed using message = 'client_id is required';
@@ -24,9 +26,15 @@ BEGIN
     attendance_record := functions.get_date_subscription_attendance(subscription_record.id, current_date);
     if attendance_record.id is null then
         -- create attendance
-        insert into api.attendances (subscription_id, date, start_time, user_id)
-        values (subscription_record.id, current_date, current_time,  (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid)
+        insert into api.attendances (subscription_id, date, start_time, user_id, count)
+        values (subscription_record.id, current_date, current_time,  current_user_id, 1)
         returning * into attendance_record;
+    else
+        -- update attendance
+        update api.attendances
+        set count = count + 1,
+        user_id = current_user_id
+        where id = attendance_record.id;
     end if;
     -- return client_id
     return json_build_object(
@@ -49,7 +57,9 @@ declare
     client_record api.clients;
     subscription_record api.subscriptions;
     permission_record api.permissions;
+    current_user_id uuid;
 BEGIN
+    current_user_id := (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
     -- raise null
     if new_permission.client_id is null then
         raise null_value_not_allowed using message = 'client_id is required';
@@ -264,5 +274,51 @@ BEGIN
 END;
 $$ language plpgsql;
 
+-- create payment
+create or replace function api.new_payment(
+    payment json  -- format: {"amount": "numeric", "client_id": "uuid", "subscription_id": "uuid"}
+) returns json as $$
+declare
+    subscription_record api.subscriptions;
+    payment_record api.payments;
+    total_balance numeric;
+    input_payment_amount numeric;
+    current_user_id uuid;
+BEGIN
+    current_user_id := (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
+    input_payment_amount := (payment->>'amount')::numeric;
+    -- raise null
+    if payment is null then
+        raise null_value_not_allowed using message = 'payment is required';
+    end if;
+    -- select all subscriptions with balance > 0 for client_id
+    select * into subscription_record
+    from api.subscriptions
+    where id = (payment->>'subscription_id')::uuid;
 
--- cash flow betwen dates group by date and 
+    -- raise exception if not found
+    if subscription_record.id is null then
+        raise exception using message = 'No se encontró la suscripción';
+    end if;
+
+    -- raise exception if balance is less than payment amount
+    if subscription_record.balance < input_payment_amount then
+        raise exception using message = 'El monto del pago es mayor al saldo de la suscripción';
+    end if;
+
+    -- insert payment
+    insert into api.payments (amount,  subscription_id, user_id)
+    values (input_payment_amount, (payment->>'subscription_id')::uuid, current_user_id)
+    returning * into payment_record;
+
+    -- update subscription balance
+    update api.subscriptions
+    set balance = balance - input_payment_amount, payment_amount = payment_amount + input_payment_amount
+    where id = (payment->>'subscription_id')::uuid;
+
+    -- return
+    return json_build_object(
+        'payment', COALESCE(to_json(payment_record), '{}')
+    );
+END;
+$$ language plpgsql;
