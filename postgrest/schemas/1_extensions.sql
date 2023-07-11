@@ -107,8 +107,3 @@ BEGIN
     return new_access_code;
     END;
 $$ language plpgsql;
-
--- get days count between two dates
-create or replace function days_between(date1 date, date2 date) returns integer as $$
-select date_part('day', date2 - date1);
-$$ language sql;

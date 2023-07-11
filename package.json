@@ -10,6 +10,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"dist:pc": "npm run build && cap sync @capacitor-community/electron && cd electron && npm run electron:make",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {

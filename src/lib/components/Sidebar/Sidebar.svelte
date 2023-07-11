@@ -5,7 +5,7 @@
 	import { authToken, storeUser } from '$lib/core/store';
 
 	$: pathname = $page.url.pathname;
-	const logo = '/logos/endor-logo.jpg';
+	const logo = '/logos/sidebar-logo.jpg';
 
 	const routes = [
 		{

@@ -1,10 +1,10 @@
-ALTER DATABASE postgrest SET "app.jwt_secret" TO 'reallyreallyreallyreallyverysafe';
+ALTER DATABASE gym SET "app.jwt_secret" TO 'reallyreallyreallyreallyverysafe';
 
 CREATE ROLE api_user nologin;
 CREATE ROLE api_admin nologin;
 CREATE ROLE api_anon nologin;
 
-CREATE ROLE authenticator WITH NOINHERIT LOGIN PASSWORD 'endorgym';
+CREATE ROLE authenticator WITH NOINHERIT LOGIN PASSWORD 'gym*';
 
 GRANT api_user TO authenticator;
 GRANT api_admin TO authenticator;

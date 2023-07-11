@@ -1,0 +1,1 @@
+INSERT INTO "api"."users" VALUES ('32d2bfd2-2017-11ee-812b-48ba4e57ef6c', 'Admin', '2023-07-11 14:17:30.033577-04', 'admin@iathings.com', '$2a$06$zckDLMEFwiqJ2EWGjXfryOWX7CiC..rmVQYQ1WqoQlrQm6VUEPG9G', '71307408', 'Oficina', '7474483', 'api_admin');

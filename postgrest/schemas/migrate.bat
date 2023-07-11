@@ -1,10 +1,17 @@
-@REM read all .sql files in this folder and run in psql
+@REM Conéctate a la base de datos por defecto (por ejemplo, postgres)
+set PGPASSWORD=%anarkia41
+psql -U postgres -d postgres -c "SELECT 'Connected to default database';"
 
-@REM iterate over all files in this folder
+@REM Crea la base de datos "gym" si no existe
+psql -U postgres -d postgres -c "CREATE DATABASE gym;"
+psql -U postgres -d postgres -c "SELECT 'Created database gym if it does not exist';"
 
+@REM Conéctate a la base de datos "gym"
+psql -U postgres -d gym -c "SELECT 'Connected to gym database';"
+
+@REM Itera sobre todos los archivos .sql en la carpeta actual
 for %%f in (*.sql) do (
-    @REM run the file in psql
+    @REM Ejecuta el archivo en psql
     echo running %%f
-    set PGPASSWORD=%anarkia41
-    psql -U linuxer -d postgrest -f %%f
+    psql -U postgres -d gym -f %%f
 )

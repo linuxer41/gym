@@ -137,7 +137,7 @@
 <div class="form  bg-image bg-cover w-full h-full" id="wallpapers" bind:this={div}>
 	<div class="dark_bg sticky top-0 z-10">
 		<h1 class="text-2xl font-bold text-center text-white grid  place-content-center content-center">
-			<img src="/logos/endorGymLogo.jpg" alt="" height="25" width="175">
+			<img src="/logos/titlebar-logo.jpg" alt="" height="25" width="175">
 			<span>{title}</span>
 		</h1>
 	</div>
