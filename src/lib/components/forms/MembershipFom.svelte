@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { rpcService, membershipService, planService } from '$lib/core/services';
+	import { membershipService, planService } from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
-	import TextField from './inputs/TextField.svelte';
 	import FormLayer from './FormLayer.svelte';
-	export let title = 'Formulario';
+	import TextField from './inputs/TextField.svelte';
 	export let isEdit = false;
+	export let title = !isEdit ? 'Nuevo membership' : 'Editar membership';
 	export let data: Partial<Membership> = {} as any;
 	console.debug({ data });
 	const dispatch = createEventDispatcher();
@@ -84,7 +83,6 @@
 					</label>
 					<select
 						id="grid-prone"
-						type="tel"
 						class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 						bind:value={data.plan_id}
 					>
@@ -102,7 +100,6 @@
 					</label>
 					<select
 						id="grid-prone"
-						type="tel"
 						class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 						bind:value={data.clients_limit}
 					>

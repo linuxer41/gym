@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { rpcService, planService } from '$lib/core/services';
+	import { planService } from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
 	import { createEventDispatcher } from 'svelte';
-	import { fly } from 'svelte/transition';
-	import TextField from './inputs/TextField.svelte';
 	import FormLayer from './FormLayer.svelte';
-	export let title = 'Formulario';
+	import TextField from './inputs/TextField.svelte';
 	export let isEdit = false;
+	export let title = !isEdit ? 'Nuevo plan' : 'Editar plan';
 	export let data: Partial<Plan> = {} as any;
 	console.debug({ data });
 	const dispatch = createEventDispatcher();

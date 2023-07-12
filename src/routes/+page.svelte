@@ -3,6 +3,7 @@
 	import Inscription from '$lib/components/home/Inscription.svelte';
 	import { fly } from 'svelte/transition';
 	import Attendance from '$lib/components/home/Attendance.svelte';
+	import Cart from '$lib/components/home/Cart.svelte';
 
 	// core components
 	const cards = [
@@ -30,6 +31,18 @@
 				type: 'permission'
 			} as any,
 			shortcut: 'F8'
+		},
+		{
+			title: 'Venta',
+			subtitle: 'Registrar venta',
+			icon: 'fas fa-shopping-cart',
+			iconColor: 'text-cyan-500',
+			component: Cart,
+			props: {
+				title: 'Registrar Venta',
+				type: 'sale'
+			} as any,
+			shortcut: 'F9'
 		}
 	];
 	let targetCard: typeof cards[number] | null;

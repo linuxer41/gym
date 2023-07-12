@@ -213,6 +213,7 @@ declare
     permissions_count integer;
     total_income numeric;
     total_expenses numeric;
+    total_sales numeric;
 BEGIN
     -- raise null
     if start_date is null or end_date is null then
@@ -258,6 +259,10 @@ BEGIN
     select sum(amount) into total_expenses
     from api.expenses
     where created_at between start_date and end_date;
+    -- get total sales
+    select sum(total) into total_sales
+    from api.sales
+    where created_at between start_date and end_date;
     -- return json
     return json_build_object(
         'attendance_count', COALESCE(attendance_count, 0),
@@ -269,7 +274,8 @@ BEGIN
         'payments_amount', COALESCE(payments_amount, 0),
         'permissions_count', COALESCE(permissions_count, 0),
         'total_income', COALESCE(total_income, 0),
-        'total_expenses', COALESCE(total_expenses, 0)
+        'total_expenses', COALESCE(total_expenses, 0),
+        'total_sales', COALESCE(total_sales, 0)
     );
 END;
 $$ language plpgsql;

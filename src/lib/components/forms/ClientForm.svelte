@@ -4,8 +4,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import FormLayer from './FormLayer.svelte';
 	import TextField from './inputs/TextField.svelte';
-	export let title = 'Formulario';
 	export let isEdit = false;
+	export let title = !isEdit ? 'Nuevo cliente' : 'Editar cliente';
 	export let data: Partial<Client> = {} as any;
 	console.debug({ data });
 	const dispatch = createEventDispatcher();

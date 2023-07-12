@@ -49,11 +49,13 @@
 
     let subscriptionData: any[] = [], subscriptionPagesLength= 0, subscriptionTotalLength= 0, subscriptionCurrentPage= 0
     let attendanceData: any[] = [], attendancePagesLength= 0, attendanceTotalLength= 0, attendanceCurrentPage= 0
+    let saleData: any[] = [], salePagesLength= 0, saleTotalLength= 0, saleCurrentPage= 0
     $:{
         if(selectedRange && window){
             loadInscripciones(selectedRange, subscriptionCurrentPage)
             loadResume(selectedRange)
             loadAttendances(selectedRange)
+            loadSales(selectedRange)
         }
     }
     
@@ -78,6 +80,7 @@ interface StatisticsResume {
     permissions_count:   number;
     total_income:        number;
     total_expenses:      number;
+    total_sales:        number;
 }
 let statistics = {} as StatisticsResume
 async function loadResume(range: typeof selectedRange){
@@ -120,6 +123,22 @@ async function loadAttendances(range: typeof selectedRange, page=0, limit=10){
     console.log(response)
     
 }
+async function loadSales(range: typeof selectedRange, page=0, limit=10){
+    const response = await clientService.getDbClient()
+    .select(`*`)
+    .and.gte('created_at', range.start.toISOString())
+    .lte('created_at', range.end.toISOString())
+    .page(page, limit)
+    .get('sale_items', true)
+    // assign data to variables
+    saleData = response.data
+    salePagesLength = response.pagesLength
+    saleTotalLength = response.totalLength
+    console.log(response)
+    
+}
+
+
 function paginate(totalPages: number, subscriptionCurrentPage: number = 0) {
     // create array from number and splice it in current page. ex: [subscriptionCurrentPage-1, subscriptionCurrentPage, subscriptionCurrentPage+1]
     const pages =  Array.from({ length:totalPages }, (_, i) => i)
@@ -142,6 +161,7 @@ onMount(async ()=>{
     await loadResume(selectedRange)
     loadInscripciones(selectedRange)
     loadAttendances(selectedRange)
+    loadSales(selectedRange)
 })
 	</script>
 
@@ -211,20 +231,7 @@ onMount(async ()=>{
                         <p class="text-white font-bold text-2xl inline-flex items-center space-x-2">
                             <span>Bs {statistics.payments_amount || 0}</span>
                             <span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="w-6 h-6"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
-                                    />
-                                </svg>
+                                <i class="fas fa-arrow-up text-green-500"></i>
                             </span>
                         </p>
                     </div>
@@ -244,29 +251,32 @@ onMount(async ()=>{
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
+                    </div>
+                    <div>
+                        <p class="text-indigo-300 text-sm font-medium uppercase leading-4">Ingreso por ventar</p>
+                        <p class="text-white font-bold text-2xl inline-flex items-center space-x-2">
+                            <span>Bs {statistics.total_sales || 0}</span>
+                            <span>
+                                <i class="fas fa-arrow-up text-green-500"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/60 p-6 rounded-lg">
+                <div class="flex flex-row space-x-4 items-center">
+                    <div id="stats-1">
+                        <i class="fas fa-money-bill-wave text-white text-4xl"></i>
                     </div>
                     <div>
                         <p class="text-blue-300 text-sm font-medium uppercase leading-4">Deudas</p>
                         <p class="text-white font-bold text-2xl inline-flex items-center space-x-2">
                             <span>Bs {statistics.debts_amount || 0}</span>
                             <span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    class="w-6 h-6"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
-                                    />
-                                </svg>
+                                <i class="fas fa-arrow-down text-red-500"></i>
                             </span>
                         </p>
                     </div>
@@ -482,6 +492,62 @@ onMount(async ()=>{
                                 {/each}
                                 {#if (attendanceCurrentPage + 2) <= attendancePagesLength && attendancePagesLength > 3}
                                 <button class="flex items-center justify-center" on:click={()=>attendanceCurrentPage++}>
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </button>
+                                {/if}
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="report">
+                <div class="header grid grid-cols-[1fr_auto]">
+                    <h4 class="font-bold">Ventas</h4>
+                    <div class="flex">
+                        <!-- download -->
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+                <div class="body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each saleData as sale}
+                            <tr>
+                                <td>{sale?.product_name || ''}</td>
+                                <td>{sale.total_quantity}</td>
+                                <td>{sale.total_amount || '--'}</td>
+                            {/each}
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footer">
+                    <!-- navigation design < prev 1 2 3 next> -->
+                    <div class="flex justify-between">
+                        <div class="flex">
+                            <!-- total count -->
+                            <p class="text-gray-400">Total: {saleTotalLength}</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            {#if salePagesLength > 1}
+                                {#if (saleCurrentPage - 1) > 0}
+                                <button class="flex items-center justify-center" on:click={()=>saleCurrentPage--}>
+                                    <i class="fas fa-chevron-left text-xs"></i>
+                                </button>
+                                {/if}
+                                {#each paginate(salePagesLength, attendanceCurrentPage) as page, index}
+                                <button class="px-2" class:active={saleCurrentPage === page} on:click={()=>saleCurrentPage = page}>{page + 1} </button>
+                                {/each}
+                                {#if (saleCurrentPage + 2) <= salePagesLength && salePagesLength > 3}
+                                <button class="flex items-center justify-center" on:click={()=>saleCurrentPage++}>
                                     <i class="fas fa-chevron-right text-xs"></i>
                                 </button>
                                 {/if}

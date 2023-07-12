@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { rpcService, userService } from '$lib/core/services';
+	import { userService } from '$lib/core/services';
 	import { snackBar } from '$lib/core/store';
 	import { createEventDispatcher } from 'svelte';
-	import { fly } from 'svelte/transition';
 	import TextField from '../forms/inputs/TextField.svelte';
 	import FormLayer from './FormLayer.svelte';
-	export let title = 'Formulario';
 	export let isEdit = false;
+	export let title = !isEdit ? 'Nuevo usuario' : 'Editar usuario';
 	export let data: Partial<User> = {} as any;
 	console.debug({ data });
 	const dispatch = createEventDispatcher();
@@ -91,7 +90,6 @@
 					</label>
 					<select
 						id="grid-prone"
-						type="tel"
 						class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 						bind:value={data.role}
 					>

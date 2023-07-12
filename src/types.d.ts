@@ -124,6 +124,48 @@ interface Income {
 	description: string;
 }
 
+interface Product {
+	id: string;
+	code: string;
+	name: string;
+	price: number;
+	stock: number;
+	image: string;
+}
+
+interface Sale {
+	id: string;
+	created_at: string;
+	user_id: string;
+	total: number;
+	client_id: string;
+	items: any[];
+	status_id: number;
+}
+
+interface Purchase {
+	id: string;
+	created_at: string;
+	user_id: string;
+	total: number;
+	client_id: string;
+	items: any[];
+	status_id: number;
+}
+
+
+interface CartItems extends Product {
+	quantity: number;
+	discount: number;
+}
+interface Cart {
+	id: string;
+	client?: Client | null;
+	items: CartItems[];
+	cart_type: 'sale' | 'purchase';
+
+}
+
 interface ClientSubscription extends Subscription {
 	membership: Membership;
 	plan: Plan;

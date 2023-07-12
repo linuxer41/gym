@@ -17,8 +17,6 @@ api.users (
   check (created_at <= now())
 );
 
-
-drop table if exists api.clients;
 create table if not exists
 api.clients (
   id uuid primary key default uuid_generate_v1(),
@@ -58,27 +56,33 @@ api.subscriptions (
   start_date date not null,
   end_date date not null,
   is_active boolean not null default true,
-  price numeric not null check (price > 0),
-  payment_amount numeric not null check (payment_amount > 0),
+  price numeric not null check (price >= 0),
+  payment_amount numeric not null check (payment_amount >= 0 and payment_amount <= price),
   balance numeric not null check (balance >= 0),
-  check (end_date > start_date),
-  check (start_date >= current_date),
+  refered_subscription_id uuid references api.subscriptions(id),
+  user_id uuid references api.users(id),
+  check (end_date >= start_date),
   check (created_at <= now())
 );
 
-drop table if exists api.payments cascade;
+alter table api.subscriptions
+  add column if not exists
+  refered_subscription_id uuid references api.subscriptions(id);
+
+alter table api.subscriptions
+  add column if not exists
+  user_id uuid references api.users(id);
+
 create table if not exists
 api.payments (
     id uuid primary key default uuid_generate_v1(),
     created_at timestamptz default now(),
     subscription_id uuid not null references api.subscriptions(id),
     amount numeric not null check (amount > 0),
+    user_id uuid references api.users(id),
     check (created_at <= now())
 );
 
-
--- attendances
-drop table if exists api.attendances cascade;
 create table if not exists
 api.attendances (
   id uuid primary key default uuid_generate_v1(),
@@ -87,32 +91,52 @@ api.attendances (
   date date not null,
   start_time time not null,
   end_time time,
-  count integer not null default 1,
-  check (created_at <= now())
+  user_id uuid references api.users(id),
+  check (created_at <= now()),
+  check (end_time >= start_time)
 );
 
--- add count column to attendances
-alter table api.attendances add column if not exists count integer not null default 1;
-
-
--- permissions of attendances client
-drop table if exists api.permissions cascade;
 create table if not exists api.permissions (
   id uuid primary key default uuid_generate_v1(),
   created_at timestamptz default now(),
   subscription_id uuid not null references api.subscriptions(id),
+  user_id uuid references api.users(id),
   date date not null,
   check (created_at <= now())
 );
 
-
 create table if not exists
 api.products (
   id uuid primary key default uuid_generate_v1(),
+  code text not null unique check (length(code) < 15),
   name text not null check (length(name) < 512),
   price numeric not null check (price > 0),
-    stock integer not null check (stock >= 0),
-    image bytea
+  stock numeric not null check (stock >= 0),
+  image bytea
+);
+
+create table if not exists
+api.sales (
+  id uuid primary key default uuid_generate_v1(),
+  created_at timestamptz default now(),
+  user_id uuid not null references api.users(id),
+  total numeric not null check (total > 0),
+  client_id uuid references api.clients(id),
+  items jsonb not null default '[]',
+  status_id int not null default 1,
+    check (created_at <= now())
+);
+
+create table if not exists
+api.purchases (
+  id uuid primary key default uuid_generate_v1(),
+  created_at timestamptz default now(),
+  user_id uuid not null references api.users(id),
+  total numeric not null check (total > 0),
+  client_id uuid references api.clients(id),
+  items jsonb not null default '[]',
+  status_id int not null default 1,
+    check (created_at <= now())
 );
 
 create table if not exists
@@ -127,25 +151,6 @@ api.cash_register (
     check (started_at <= now()),
     check (ended_at <= now())
 
-);
-
-create table if not exists
-api.sales (
-  id uuid primary key default uuid_generate_v1(),
-  created_at timestamptz default now(),
-  user_id uuid not null references api.users(id),
-  total numeric not null check (total > 0),
-  client_id uuid references api.clients(id) not null,
-    check (created_at <= now())
-);
-
-create table if not exists
-api.sale_items (
-  id uuid primary key default uuid_generate_v1(),
-  sale_id uuid not null references api.sales(id),
-  product_id uuid not null references api.products(id),
-  quantity integer not null check (quantity > 0),
-  price numeric not null check (price > 0)
 );
 
 create table if not exists
@@ -167,38 +172,85 @@ api.incomes (
     check (created_at <= now())
 );
 
--- create table if not exists
--- api.workouts (
---   id uuid primary key default uuid_generate_v1(),
---   name text not null check (length(name) < 512),
---   description text not null check (length(description) < 512)
--- );
-
--- create table if not exists
--- api.exercises (
---   id uuid primary key default uuid_generate_v1(),
---   name text not null check (length(name) < 512),
---   description text not null check (length(description) < 512)
--- );
-
--- create table if not exists
--- api.workout_exercises (
---   id uuid primary key default uuid_generate_v1(),
---   workout_id uuid references api.workouts(id) not null,
---   exercise_id uuid references api.exercises(id) not null,
---   sets integer not null check (sets > 0),
---   reps integer not null check (reps > 0),
---   weight numeric not null check (weight > 0)
--- );
 
 
 
--- create table if not exists
--- api.workout_clients (
---   id uuid primary key default uuid_generate_v1(),
---   workout_id uuid references api.workouts(id) not null,
---   client_id uuid references api.clients(id) not null
--- );
+
+-- triggers
+
+-- Trigger function for insert on api.sales
+CREATE OR REPLACE FUNCTION update_sales_stock_insert()
+  RETURNS TRIGGER AS $$
+DECLARE
+  product_id UUID;
+  quantity NUMERIC;
+  item_record RECORD;
+BEGIN
+  IF NEW.items IS NOT NULL THEN -- Check if items exist
+    -- Create a temporary table to hold the records
+    CREATE TEMP TABLE temp_items AS SELECT * FROM jsonb_array_elements(NEW.items);
+
+    -- Iterate over each item in the temporary table
+    FOR item_record IN SELECT * FROM temp_items
+    LOOP
+      -- Get the product ID and quantity from each item
+      product_id := item_record."value"->>'product_id';
+      quantity := (item_record."value"->>'quantity')::NUMERIC;
+
+      -- Decrease the stock of the product
+      UPDATE api.products
+      SET stock = stock - quantity
+      WHERE id = product_id;
+    END LOOP;
+
+    -- Drop the temporary table
+    DROP TABLE IF EXISTS temp_items;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for insert on api.sales
+CREATE TRIGGER update_sales_stock_insert_trigger
+AFTER INSERT ON api.sales
+FOR EACH ROW
+EXECUTE FUNCTION update_sales_stock_insert();
 
 
+-- Trigger function for insert on api.purchases
+CREATE OR REPLACE FUNCTION update_purchases_stock_insert()
+  RETURNS TRIGGER AS $$
+DECLARE
+  product_id UUID;
+  quantity NUMERIC;
+  item_record RECORD;
+BEGIN
+  IF NEW.items IS NOT NULL THEN -- Check if items exist
+    -- Create a temporary table to hold the records
+    CREATE TEMP TABLE temp_items AS SELECT * FROM jsonb_array_elements(NEW.items);
 
+    -- Iterate over each item in the temporary table
+    FOR item_record IN SELECT * FROM temp_items
+    LOOP
+      -- Get the product ID and quantity from each item
+      product_id := item_record."value"->>'product_id';
+      quantity := (item_record."value"->>'quantity')::NUMERIC;
+
+      -- Increase the stock of the product
+      UPDATE api.products
+      SET stock = stock + quantity
+      WHERE id = product_id;
+    END LOOP;
+
+    -- Drop the temporary table
+    DROP TABLE IF EXISTS temp_items;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for insert on api.purchases
+CREATE TRIGGER update_purchases_stock_insert_trigger
+AFTER INSERT ON api.purchases
+FOR EACH ROW
+EXECUTE FUNCTION update_purchases_stock_insert();

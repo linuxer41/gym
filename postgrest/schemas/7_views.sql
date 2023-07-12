@@ -94,3 +94,19 @@ from api.payments
 inner join api.users on api.payments.user_id = api.users.id
 group by api.payments.created_at::date, api.payments.user_id
 order by api.payments.created_at::date desc;
+
+CREATE OR REPLACE VIEW sale_items AS
+SELECT
+  p.name AS product_name,
+  p.code AS product_code,
+  SUM((item->>'quantity')::numeric) AS total_quantity,
+  SUM((item->>'quantity')::numeric * p.price) AS total_amount,
+  (ARRAY_AGG(s.created_at))[1] AS created_at
+FROM
+  api.sales s
+  CROSS JOIN LATERAL jsonb_array_elements(s.items) AS item
+  JOIN api.products p ON (item->>'product_id')::uuid = p.id
+GROUP BY
+  p.name,
+  p.code,
+	p."id"

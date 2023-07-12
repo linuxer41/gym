@@ -30,6 +30,7 @@
 				value = e.currentTarget.value;
 				dispatch('input', value);
 			}}
+			step={type === 'number'? 0.01 : undefined}
 		/>
 	</div>
 </div>

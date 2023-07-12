@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-
 	export let title = 'Formulario';
+	export let hasConfirm = true;
 	const dispatch = createEventDispatcher();
 	onMount(() => {
 		// get form and set focus on first input
@@ -46,6 +46,7 @@
 				</button>
 
 				<h6 class="text-white text-xl font-bold">{title}</h6>
+				{#if hasConfirm}
 				<button
 					class="bg-slate-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
 					type="button"
@@ -53,6 +54,9 @@
 				>
 					Confirmar
 				</button>
+				{:else}
+				<button></button>
+				{/if}	
 			</div>
 		</div>
 		<div class="flex-auto p-4 light_bg">

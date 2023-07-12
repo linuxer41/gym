@@ -30,6 +30,13 @@
 			group: 'management'
 		},
 		{
+			label: 'Productos',
+			icon: 'fa-store',
+			path: '/products',
+			access_level: 2,
+			group: 'management'
+		},
+		{
 			label: 'Ajustes',
 			icon: 'fa-tools',
 			path: '/settings',
