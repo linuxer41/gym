@@ -92,6 +92,7 @@ api.attendances (
   start_time time not null,
   end_time time,
   user_id uuid references api.users(id),
+  count integer not null default 0,
   check (created_at <= now()),
   check (end_time >= start_time)
 );
