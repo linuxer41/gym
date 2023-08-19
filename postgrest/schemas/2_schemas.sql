@@ -44,8 +44,21 @@ api.memberships (
   price numeric not null check (price > 0),
   clients_limit integer not null check (clients_limit > 0),
   duration integer not null check (duration > 0), -- in days
-  plan_id uuid references api.plans(id) not null
+  plan_id uuid references api.plans(id) not null,
+  assistance_limit integer check (assistance_limit > 0 and assistance_limit <= duration)
+  /* generated column for set type of subscription */
+  item_type text generated always as (case when assistance_limit is null or assistance_limit = duration then 'continuous' else 'interval' end) stored
 );
+
+/* add assistance_limit as update table */
+alter table api.memberships
+  add column if not exists
+  assistance_limit integer check (assistance_limit > 0 and assistance_limit <= duration);
+
+/* generated column for set item_type of subscription */
+alter table api.memberships
+  add column if not exists
+  item_type text generated always as (case when assistance_limit is null or assistance_limit = duration then 'continuous' else 'interval' end) stored;
 
 create table if not exists
 api.subscriptions (
@@ -96,6 +109,11 @@ api.attendances (
   check (created_at <= now()),
   check (end_time >= start_time)
 );
+
+/* add count */
+alter table api.attendances
+  add column if not exists
+  count integer not null default 0;
 
 create table if not exists api.permissions (
   id uuid primary key default uuid_generate_v1(),

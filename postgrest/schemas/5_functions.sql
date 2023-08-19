@@ -73,6 +73,19 @@ BEGIN
 END;
 $$ language plpgsql;
 
+-- create get attendance count per subscription function
+create or replace function functions.get_attendance_count(
+    subscription_id uuid
+) returns integer as $$
+declare
+    attendance_count integer;
+BEGIN
+    select count(*) from api.attendances where attendances.subscription_id = get_attendance_count.subscription_id
+    into attendance_count;
+    return attendance_count;
+END;
+$$ language plpgsql;
+
 -- create get date subscription permission function
 create or replace function functions.get_date_subscription_permission(
     subscription_id uuid,
@@ -106,5 +119,21 @@ BEGIN
         raise exception using message = 'El cliente ya tiene una asistencia para el día ' || date;
     end if;
     return true;
+END;
+$$ language plpgsql;
+
+/* get membership by id */
+create or replace function functions.get_membership(
+    membership_id uuid
+) returns api.memberships as $$
+declare
+    membership_record api.memberships;
+BEGIN
+    select * from api.memberships where memberships.id = get_membership.membership_id limit 1
+    into membership_record;
+    if membership_record.id is null then
+        raise exception using message = 'La membresía no existe';
+    end if;
+    return membership_record;
 END;
 $$ language plpgsql;

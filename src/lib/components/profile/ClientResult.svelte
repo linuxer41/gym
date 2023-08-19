@@ -1,11 +1,34 @@
 <script lang="ts">
-	import { getDaysInMonth, getWeek, isBefore, isWithinInterval, parseISO } from "date-fns";
+	import { getDaysInMonth, getWeek, isBefore, isWithinInterval, parseISO, sub } from "date-fns";
 	import DebtModal from "../modals/DebtModal.svelte";
+	import ModalLayer from "../modals/ModalLayer.svelte";
+	import { snackBar } from "$lib/core/store";
+	import Dialog from "../common/Dialog.svelte";
+	import { subscriptionService } from "$lib/core/services";
 	
 	export let subscriber: Subscriber;
     export let fontLarge = false;
     let showDebtModal = false;
+    let toCancelSubscription: ClientSubscription|null = null;
 
+
+    async function cancelSubscription(subs: ClientSubscription){
+        try {
+            const res = await subscriptionService.update(subs.id!, {
+                is_active: false
+            });
+            snackBar.show({
+                message: 'Suscripción cancelada con exito',
+                type: 'success'
+            });
+        } catch (error) {
+            snackBar.show({
+                message: 'Error al cancelar la suscripción',
+                type: 'error'
+            });
+            console.debug(error);
+        }
+    }
     
     function getDates() {
         const dates: any[] = [];
@@ -104,7 +127,9 @@
         'text-red-500': 'Falta',
         'text-gray-700': 'Habilitado',
     }
-    const getSubscriptionInfo = (active_subscription: ClientSubscription) =>  [
+    const getSubscriptionInfo = (active_subscription: ClientSubscription) =>  {
+        console.log({active_subscription});
+        return[
         {
             label: 'Fecha de inicio',
             value: active_subscription.start_date || 'N/A',
@@ -118,10 +143,14 @@
             value: active_subscription.left_days || 'N/A',
         },
         {
-            label: 'Tipo',
+            label: 'Membresía',
             value: (active_subscription.membership.name + ' - ' + active_subscription.plan.name) || 'N/A',
+        },
+        {
+            label: 'Tipo',
+            value: (active_subscription.membership.item_type == 'continuous' ? 'Continuo' : 'Intervalo') || 'N/A',
         }
-    ]
+    ]}
 
 </script>
 
@@ -168,6 +197,15 @@
                         </h1>
                     </div>
                 {/each}
+            </div>
+
+            <!-- add remove subscription button -->
+            <div class="flex justify-between">
+                <button class="bg-red-500 text-white font-bold py-2 px-4 rounded w-full" on:click={() => {
+                    toCancelSubscription = subscriber.active_subscription;
+                }}>
+                    Cancelar suscripción
+                </button>
             </div>
             {:else}
                 <h6 class="text-red-500 text-lg mt-3 mb-6 font-bold ">
@@ -260,6 +298,25 @@
     on:payment
     title="Deudas del cliente"
 />
+{/if}
+
+{#if toCancelSubscription}
+<Dialog
+	title="Cancelar suscripción"
+    message="¿Está seguro que desea cancelar la suscripción?. Esta acción no se puede deshacer."
+	on:cancel={() => toCancelSubscription = null}
+    on:confirm={() => {
+        toCancelSubscription && cancelSubscription(toCancelSubscription)
+        toCancelSubscription = null
+        
+        // snackBar.show({
+        //     message: 'Funcionalidad no implementada',
+        //     type: 'error'
+        // })
+    }}
+>
+
+</Dialog>
 {/if}
 <style lang="scss">
     .calendar{

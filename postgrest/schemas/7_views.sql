@@ -44,8 +44,18 @@ left join (
 -- lateral calculate used
 , lateral (
     select case
-        when api.subscriptions.start_date = api.subscriptions.end_date then 1
-        else (api.subscriptions.end_date - api.subscriptions.start_date)
+        /* when api.subscriptions.start_date = api.subscriptions.end_date then 1
+        else (api.subscriptions.end_date - api.subscriptions.start_date) */
+
+        /* correct above wiht api.memberships.assistance_limit and item_type for interval */
+        
+        when api.memberships.item_type = 'interval' then api.memberships.assistance_limit
+        else (
+          case
+            when api.subscriptions.start_date = api.subscriptions.end_date then 1
+            else (api.subscriptions.end_date - api.subscriptions.start_date)
+          end
+        )
     end as total_days
 ) as total_days
 

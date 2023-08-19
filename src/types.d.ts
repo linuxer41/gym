@@ -64,6 +64,8 @@ interface Membership {
 	duration: number;
 	clients_limit: number;
 	plan_id: string;
+	assistance_limit: number;
+	item_type: 'continuous' | 'interval';
 }
 
 interface MembershipJoined extends Membership {

@@ -7,6 +7,8 @@ declare
     client_record api.clients;
     subscription_record api.subscriptions;
     attendance_record api.attendances;
+    membership_record api.memberships;
+    attendance_count integer;
     current_user_id uuid;
 BEGIN
     current_user_id := (current_setting('request.jwt.claims', true)::json->>'user_id')::uuid;
@@ -20,9 +22,19 @@ BEGIN
         raise exception using message = 'El cliente no tiene una suscripción activa';
     end if;
 
+    membership_record := functions.get_membership(subscription_record.membership_id);
+    if membership_record.id is null then
+        raise exception using message = 'La suscripción no tiene un plan de membresía';
+    end if;
+
     -- if not functions.check_attendance_permission(subscription_record.id, current_date) then
     --     raise exception using message = 'No tiene permiso para asistir';
     -- end if;
+    attendance_count := functions.get_attendance_count(subscription_record.id);
+    if attendance_count >= membership_record.assistance_limit and membership_record.item_type = 'interval' then
+        raise exception using message = 'El cliente ya alcanzó el máximo de asistencias permitidas';
+    end if;
+
     attendance_record := functions.get_date_subscription_attendance(subscription_record.id, current_date);
     if attendance_record.id is null then
         -- create attendance

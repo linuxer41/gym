@@ -4,8 +4,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import FormLayer from './FormLayer.svelte';
 	import TextField from './inputs/TextField.svelte';
+	import da from 'date-fns/locale/da';
 	export let isEdit = false;
-	export let title = !isEdit ? 'Nuevo membership' : 'Editar membership';
+	export let title = !isEdit ? 'Nueva membresía' : 'Editar membresía';
 	export let data: Partial<Membership> = {} as any;
 	console.debug({ data });
 	const dispatch = createEventDispatcher();
@@ -27,8 +28,13 @@
 			if (!form.checkValidity()) {
 				throw new Error('Formulario invalido o incompleto');
 			}
+			if(Number(data.assistance_limit || 0) > Number(data.duration || 0)){
+				console.debug(data)
+				throw new Error('El limite de días de asistencia no puede ser mayor a la duración');
+			}
 			if (isEdit) {
 				// delete optional pass field to avoid update it
+				delete data.item_type  // generated column
 				data = await membershipService.update(data.id || '', data);
 				snackBar.show({
 					message: 'Membership actualizado con exito',
@@ -65,15 +71,21 @@
 >
 	<form bind:this={form}>
 		<h6 class="text-slate-400 text-sm mt-3 mb-6 font-bold uppercase">
-			Informacion del membershipe
+			Información de la membresía
 		</h6>
 		<div class="flex flex-wrap">
 			<TextField label="Nombre" bind:value={data.name} required />
 			<TextField label="Precio" bind:value={data.price} placeholder="" type="number" />
 			<TextField
-				label="Duracion"
+				label="Duración"
 				bind:value={data.duration}
-				placeholder="Duracion (Dias)"
+				placeholder="Duración (Dias)"
+				type="number"
+			/>
+			<TextField
+				label="Limite de Dias de asistencia"
+				bind:value={data.assistance_limit}
+				placeholder="Limite (Dias)"
 				type="number"
 			/>
 			<div class="w-full lg:w-6/12 px-4">
